@@ -1,0 +1,806 @@
+/* Odoo 19 Service Desk Dashboard Stylesheet */
+
+/* Client actions render inside .o_action which defaults to overflow:hidden.
+   Enable vertical scroll so stage tables and recent tickets below KPI cards are reachable. */
+
+   .o_tv_service_desk_dashboard {
+    min-height: 100vh;
+    overflow-y: auto !important;
+}
+
+.o_content,
+.o_action_manager,
+.o_action {
+    overflow-y: auto !important;
+}
+
+   .o_action:has(.o_tv_service_desk_dashboard) {
+    overflow: auto !important;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.o_tv_service_desk_dashboard {
+    min-height: auto;
+    height: auto;
+    overflow: visible;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    padding-bottom: 2rem;
+}
+
+.o_tv_service_desk_dashboard {
+
+    /* General Layout */
+    .dashboard-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding-bottom: 2rem;
+    }
+
+    /* Glassmorphic Header & Filter Bar */
+    .dashboard-header {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.08);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-title {
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
+
+    /* Filter Controls */
+    .filter-btn-group {
+        background: #f1f5f9;
+        padding: 0.25rem;
+        border-radius: 12px;
+        display: inline-flex;
+        gap: 0.125rem;
+
+        .btn-filter {
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            &:hover {
+                color: #0f172a;
+            }
+
+            &.active {
+                background: #ffffff;
+                color: #6f42c1;
+                box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.05);
+            }
+        }
+    }
+
+    /* Toggle Switch */
+    .my-tickets-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f1f5f9;
+        padding: 0.375rem 0.875rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #475569;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s;
+
+        &:hover {
+            background: #e2e8f0;
+        }
+
+        &.active {
+            background: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+            
+            .toggle-indicator {
+                background: #6f42c1;
+                transform: translateX(14px);
+            }
+        }
+
+        .toggle-track {
+            width: 32px;
+            height: 18px;
+            background: #cbd5e1;
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+
+        .toggle-indicator {
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+    }
+
+    /* KPI Cards section */
+    .kpi-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .kpi-card.kpi-stage-reference {
+        background: #ffffff;
+        border-color: rgba(226, 232, 240, 0.8);
+        color: #1e293b;
+
+        .kpi-value,
+        .kpi-label {
+            color: #1e293b !important;
+        }
+    }
+
+    /* Custom KPI Cards */
+    .kpi-card {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 16px;
+        padding: 1.25rem;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+        box-shadow: 0 4px 12px -1px rgba(148, 163, 184, 0.05);
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -4px rgba(148, 163, 184, 0.18);
+        }
+
+        .kpi-circle-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+
+        .kpi-circle-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: transform 0.3s, background-color 0.2s;
+        }
+
+        &:hover .kpi-circle-icon {
+            transform: scale(1.1);
+        }
+
+        &:hover .kpi-circle-arrow {
+            transform: translateX(4px);
+        }
+
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1;
+            color: #111827;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.35rem;
+        }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.05em;
+        }
+    }
+
+    /* Quick Actions Toolbar */
+    .quick-actions-bar {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 12px -1px rgba(148, 163, 184, 0.05);
+
+        .actions-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.625rem 1.25rem;
+            border-radius: 12px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+
+            i {
+                font-size: 0.95rem;
+            }
+
+            &.btn-new {
+                background: linear-gradient(135deg, #6f42c1, #5a32a3);
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(111, 66, 193, 0.25);
+                &:hover {
+                    box-shadow: 0 6px 16px rgba(111, 66, 193, 0.35);
+                    transform: translateY(-1px);
+                }
+            }
+
+            &.btn-secondary-action {
+                background: #ffffff;
+                border: 1px solid #cbd5e1;
+                color: #475569;
+                &:hover {
+                    background: #f8fafc;
+                    color: #0f172a;
+                    border-color: #94a3b8;
+                }
+            }
+        }
+    }
+
+    /* Helpdesk Filter Panel */
+    .helpdesk-filter-panel {
+        background: #ffffff;
+        border: 1px solid #e8e0f3;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(111, 66, 193, 0.08);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .helpdesk-filter-toolbar {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .helpdesk-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 0.75rem 1rem;
+    }
+
+    .filter-chip {
+        align-self: center;
+        margin-bottom: 0.35rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.35rem 0.5rem 0.35rem 0.85rem;
+        background: linear-gradient(135deg, #f8f5ff 0%, #f3eeff 100%);
+        border: 1px solid #d8c9f5;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #5a32a3;
+        line-height: 1.2;
+    }
+
+    .filter-chip-label {
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-chip-remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(111, 66, 193, 0.15);
+        color: #6f42c1;
+        font-size: 1rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background: #6f42c1;
+            color: #ffffff;
+        }
+    }
+
+    .helpdesk-filter-field {
+        flex: 1 1 180px;
+        min-width: 160px;
+        max-width: 240px;
+
+        &.helpdesk-filter-field-date {
+            min-width: 150px;
+            max-width: 180px;
+        }
+    }
+
+    .helpdesk-filter-label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #6f42c1;
+    }
+
+    .helpdesk-filter-control {
+        display: block;
+        width: 100%;
+        min-height: 42px;
+        padding: 0.55rem 0.85rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #334155;
+        background: #faf8ff;
+        border: 1px solid #ddd3f0;
+        border-radius: 10px;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: #6f42c1;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.12);
+        }
+    }
+
+    select.helpdesk-filter-control {
+        cursor: pointer;
+        appearance: auto;
+    }
+
+    @media (max-width: 992px) {
+        .helpdesk-filter-field {
+            flex: 1 1 calc(50% - 1rem);
+            max-width: none;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .helpdesk-filter-field {
+            flex: 1 1 100%;
+            max-width: none;
+        }
+    }
+
+    /* Stage Accordion (vertical full-width list) */
+    .stage-accordion-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 4px 12px -1px rgba(148, 163, 184, 0.08);
+    }
+
+    .stage-accordion-item {
+        width: 100%;
+        border-bottom: 1px solid #e2e8f0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &.expanded {
+            .stage-accordion-header {
+                background: #f8f5ff;
+                border-bottom-color: #e9e0f5;
+            }
+        }
+    }
+
+    .stage-accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background: #ffffff;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.2s ease;
+        gap: 1rem;
+
+        &:hover {
+            background: #faf8ff;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px rgba(111, 66, 193, 0.25);
+        }
+    }
+
+    .stage-accordion-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .stage-accordion-chevron {
+        color: #6f42c1;
+        font-size: 0.85rem;
+        width: 14px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .stage-accordion-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        letter-spacing: -0.01em;
+    }
+
+    .stage-count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+        padding: 0 0.5rem;
+        border-radius: 999px;
+        background: rgba(111, 66, 193, 0.12);
+        color: #6f42c1;
+        font-size: 0.8rem;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .stage-accordion-meta {
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .stage-accordion-body {
+        width: 100%;
+        padding: 0 1.25rem 1.25rem;
+        animation: sdAccordionOpen 0.2s ease;
+
+        .stage-pager-controls {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+
+            .btn {
+                border-radius: 8px;
+                font-weight: 600;
+            }
+        }
+
+        .pager-info {
+            font-weight: 600;
+        }
+    }
+
+    .stage-accordion-divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+        margin-bottom: 1rem;
+    }
+
+    @keyframes sdAccordionOpen {
+        from {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stage-accordion-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .stage-accordion-meta {
+            padding-left: 1.65rem;
+        }
+
+        .stage-accordion-body .stage-pager-controls {
+            flex-direction: column;
+            align-items: stretch !important;
+
+            .d-flex.gap-2 {
+                width: 100%;
+                justify-content: stretch;
+
+                .btn {
+                    flex: 1;
+                }
+            }
+        }
+    }
+
+    .kpi-stage-configured {
+        .kpi-icon-wrapper {
+            transition: transform 0.3s;
+        }
+    }
+
+    /* Bottom Split Layout */
+    .bottom-split-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+
+        @media (max-width: 1024px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .section-card {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px -1px rgba(148, 163, 184, 0.05);
+        display: flex;
+        flex-direction: column;
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 0.75rem;
+
+            .section-title {
+                font-weight: 700;
+                font-size: 1.2rem;
+                color: #0f172a;
+            }
+        }
+    }
+
+    /* Recent Tickets Table Styling */
+    .table-responsive {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+    }
+
+    .recent-tickets-table {
+        margin: 0;
+        width: 100%;
+
+        th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border-bottom: 1.5px solid #e2e8f0;
+        }
+
+        td {
+            padding: 1rem;
+            vertical-align: middle;
+            font-size: 0.875rem;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            &:hover td {
+                background-color: #f1f5f9;
+            }
+        }
+
+        .ticket-ref {
+            font-weight: 700;
+            color: #6f42c1;
+        }
+
+        .ticket-subject {
+            font-weight: 600;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    /* Badges */
+    .badge-priority {
+        padding: 0.35em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border-radius: 8px;
+        display: inline-block;
+
+        &.priority-urgent { background-color: #fee2e2; color: #991b1b; }
+        &.priority-high { background-color: #ffedd5; color: #9a3412; }
+        &.priority-normal { background-color: #dbeafe; color: #1e40af; }
+        &.priority-low { background-color: #f1f5f9; color: #475569; }
+    }
+
+    .badge-sla {
+        padding: 0.35em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border-radius: 8px;
+        display: inline-block;
+
+        &.sla-failed { background-color: #fecaca; color: #b91c1c; }
+        &.sla-reached { background-color: #d1fae5; color: #065f46; }
+        &.sla-ongoing { background-color: #e0f2fe; color: #0369a1; }
+        &.sla-no_sla { background-color: #f1f5f9; color: #475569; }
+    }
+
+    .badge-stage {
+        padding: 0.35em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border-radius: 8px;
+        display: inline-block;
+        background-color: #e2e8f0;
+        color: #334155;
+    }
+
+    /* Activities Feed (Timeline) Styling */
+    .activities-feed {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            bottom: 8px;
+            left: 20px;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .activity-item {
+            position: relative;
+            padding-left: 48px;
+            padding-bottom: 1.5rem;
+
+            &:last-child {
+                padding-bottom: 0;
+            }
+
+            .activity-icon-bullet {
+                position: absolute;
+                left: 8px;
+                top: 0;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: #ffffff;
+                border: 2px solid #cbd5e1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                z-index: 1;
+                transition: transform 0.2s;
+
+                &.type-create { border-color: #0d9488; color: #0d9488; background: #f0fdfa; }
+                &.type-assign { border-color: #7c3aed; color: #7c3aed; background: #f5f3ff; }
+                &.type-stage_change { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+                &.type-closed { border-color: #475569; color: #475569; background: #f8fafc; }
+                &.type-sla_breached { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+            }
+
+            .activity-content {
+                .activity-meta {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    margin-bottom: 0.125rem;
+
+                    .activity-user {
+                        font-weight: 700;
+                        font-size: 0.875rem;
+                        color: #1e293b;
+                    }
+
+                    .activity-time {
+                        font-size: 0.75rem;
+                        color: #94a3b8;
+                    }
+                }
+
+                .activity-desc {
+                    font-size: 0.85rem;
+                    color: #475569;
+                    line-height: 1.4;
+
+                    .ticket-link {
+                        font-weight: 600;
+                        color: #6f42c1;
+                        text-decoration: none;
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .sd-whatsapp-action {
+        color: #25d366 !important;
+        font-size: 1.25rem;
+        line-height: 1;
+
+        &:hover {
+            color: #128c7e !important;
+        }
+    }
+}

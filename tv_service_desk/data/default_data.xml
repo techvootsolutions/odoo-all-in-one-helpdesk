@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="stage_new" model="service.desk.stage">
+        <field name="name">New</field>
+        <field name="sequence">1</field>
+        <field name="is_default" eval="True"/>
+        <field name="color">4</field>
+    </record>
+    <record id="stage_in_progress" model="service.desk.stage">
+        <field name="name">In Progress</field>
+        <field name="sequence">2</field>
+        <field name="color">3</field>
+    </record>
+    <record id="stage_waiting" model="service.desk.stage">
+        <field name="name">Done</field>
+        <field name="sequence">3</field>
+        <field name="color">10</field>
+    </record>
+    <record id="stage_done" model="service.desk.stage">
+        <field name="name">Closed</field>
+        <field name="sequence">4</field>
+        <field name="is_closed" eval="True"/>
+        <field name="fold" eval="True"/>
+        <field name="color">8</field>
+    </record>
+    <record id="stage_cancelled" model="service.desk.stage">
+        <field name="name">Cancelled</field>
+        <field name="sequence">5</field>
+        <field name="is_closed" eval="True"/>
+        <field name="fold" eval="True"/>
+        <field name="color">1</field>
+    </record>
+    <record id="stage_reopened" model="service.desk.stage">
+        <field name="name">Reopened</field>
+        <field name="sequence">6</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="priority_low" model="service.desk.priority">
+        <field name="name">Low</field>
+        <field name="sequence">1</field>
+        <field name="weight">1</field>
+    </record>
+    <record id="priority_normal" model="service.desk.priority">
+        <field name="name">Medium</field>
+        <field name="sequence">2</field>
+        <field name="weight">2</field>
+    </record>
+    <record id="priority_high" model="service.desk.priority">
+        <field name="name">High</field>
+        <field name="sequence">3</field>
+        <field name="weight">3</field>
+    </record>
+    <record id="priority_urgent" model="service.desk.priority">
+        <field name="name">Urgent</field>
+        <field name="sequence">4</field>
+        <field name="weight">4</field>
+    </record>
+
+    <record id="team_tech" model="service.desk.team">
+        <field name="name">Tech Team</field>
+        <field name="is_default" eval="False"/>
+        <field name="assignment_method">round_robin</field>
+        <field name="open_stage_ids" eval="[(6, 0, [ref('stage_new'), ref('stage_in_progress'), ref('stage_reopened')])]"/>
+    </record>
+    <record id="team_support" model="service.desk.team">
+        <field name="name">Support Team</field>
+        <field name="is_default" eval="True"/>
+        <field name="assignment_method">round_robin</field>
+        <field name="open_stage_ids" eval="[(6, 0, [ref('stage_new'), ref('stage_in_progress'), ref('stage_reopened')])]"/>
+    </record>
+    <record id="team_default" model="service.desk.team">
+        <field name="name">General Support</field>
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="ticket_type_general" model="service.desk.ticket.type">
+        <field name="name">General Inquiry</field>
+    </record>
+    <record id="ticket_type_technical" model="service.desk.ticket.type">
+        <field name="name">Technical</field>
+    </record>
+</odoo>

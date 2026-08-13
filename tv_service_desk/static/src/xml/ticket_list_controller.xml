@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="tv_service_desk.TicketListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//Layout" position="before">
+            <div class="o_sd_ticket_status_bar" t-if="!env.isSmall">
+                <div class="o_sd_status_cards_row">
+                    <!-- All Tickets -->
+                    <div t-attf-class="o_sd_status_card card-all #{state.activeFilter === 'all' ? 'active' : ''}"
+                         t-on-click="onFilterAll">
+                        <div class="o_sd_card_icon"><i class="fa fa-th-large"/></div>
+                        <div class="o_sd_card_body">
+                            <span class="o_sd_card_count" t-esc="state.counts.total"/>
+                            <span class="o_sd_card_label">All</span>
+                        </div>
+                    </div>
+
+                    <!-- Open Tickets -->
+                    <div t-attf-class="o_sd_status_card card-open #{state.activeFilter === 'open' ? 'active' : ''}"
+                         t-on-click="onFilterOpen">
+                        <div class="o_sd_card_icon"><i class="fa fa-folder-open"/></div>
+                        <div class="o_sd_card_body">
+                            <span class="o_sd_card_count" t-esc="state.counts.open"/>
+                            <span class="o_sd_card_label">Open</span>
+                        </div>
+                    </div>
+
+                    <!-- Per-Stage Cards -->
+                    <t t-foreach="state.counts.stages" t-as="stage" t-key="stage.id">
+                        <div t-att-class="{'o_sd_status_card': true, 'card-stage': true, 'active': state.activeFilter === ('stage_' + stage.id)}"
+                             t-att-style="'--sd-card-color: ' + getStageColor(stage)"
+                             t-on-click="() => this.onFilterStage(stage)">
+                            <div class="o_sd_card_icon">
+                                <i t-attf-class="fa #{getStageIcon(stage)}"/>
+                            </div>
+                            <div class="o_sd_card_body">
+                                <span class="o_sd_card_count" t-esc="stage.count"/>
+                                <span class="o_sd_card_label" t-esc="stage.name"/>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- My Tickets -->
+                    <div t-attf-class="o_sd_status_card card-my #{state.activeFilter === 'my' ? 'active' : ''}"
+                         t-on-click="onFilterMyTickets">
+                        <div class="o_sd_card_icon"><i class="fa fa-user"/></div>
+                        <div class="o_sd_card_body">
+                            <span class="o_sd_card_count" t-esc="state.counts.my_tickets"/>
+                            <span class="o_sd_card_label">My Tickets</span>
+                        </div>
+                    </div>
+
+                    <!-- SLA Failed -->
+                    <div t-attf-class="o_sd_status_card card-sla #{state.activeFilter === 'sla' ? 'active' : ''}"
+                         t-on-click="onFilterSlaFailed">
+                        <div class="o_sd_card_icon"><i class="fa fa-exclamation-triangle"/></div>
+                        <div class="o_sd_card_body">
+                            <span class="o_sd_card_count" t-esc="state.counts.sla_failed"/>
+                            <span class="o_sd_card_label">SLA Failed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

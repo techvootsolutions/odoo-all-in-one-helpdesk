@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mail_activity_type_upload_document" model="mail.activity.type">
+        <field name="name">Upload Document</field>
+        <field name="icon">fa-upload</field>
+        <field name="res_model">service.desk.ticket</field>
+    </record>
+</odoo>

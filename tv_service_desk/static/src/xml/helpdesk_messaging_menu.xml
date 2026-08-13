@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.MessagingMenu" t-inherit-mode="extension">
+        <xpath expr="//i[contains(@class, 'fa-comments')]" position="replace">
+            <i
+                t-att-class="helpdeskSystrayIconClass"
+                role="img"
+                t-att-aria-label="helpdeskSystrayAriaLabel"
+                t-on-click="onHelpdeskSystrayIconClick"
+            />
+        </xpath>
+    </t>
+</templates>

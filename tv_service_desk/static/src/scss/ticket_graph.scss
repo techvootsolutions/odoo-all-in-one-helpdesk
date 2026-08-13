@@ -1,0 +1,28 @@
+/* Helpdesk graph — readable chart on white background */
+.o_graph_view {
+    .o_graph_canvas_container {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.75rem 1rem 1rem;
+    }
+
+    .o_cp_buttons .btn,
+    .o_graph_measure,
+    .o_graph_button,
+    .dropdown-toggle,
+    .o-dropdown-item {
+        color: #1f2937 !important;
+    }
+
+  /* Chart.js HTML legend (if rendered) */
+    canvas + div,
+    .chartjs-legend {
+        color: #1f2937 !important;
+
+        li,
+        span {
+            color: #1f2937 !important;
+        }
+    }
+}

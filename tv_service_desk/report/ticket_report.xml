@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_service_desk_ticket" model="ir.actions.report">
+        <field name="name">Helpdesk Ticket</field>
+        <field name="model">service.desk.ticket</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">tv_service_desk.report_service_desk_ticket</field>
+        <field name="report_file">tv_service_desk.report_service_desk_ticket</field>
+        <field name="binding_model_id" ref="model_service_desk_ticket"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

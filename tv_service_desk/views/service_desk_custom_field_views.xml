@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_form_tab_list" model="ir.ui.view">
+        <field name="name">service.desk.form.tab.list</field>
+        <field name="model">service.desk.form.tab</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_form_tab_form" model="ir.ui.view">
+        <field name="name">service.desk.form.tab.form</field>
+        <field name="model">service.desk.form.tab</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="team_ids" widget="many2many_tags"/>
+                    </group>
+                    <field name="field_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="technical_name"/>
+                            <field name="field_type"/>
+                            <field name="is_required"/>
+                            <field name="is_visible_portal"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_desk_form_tab" model="ir.actions.act_window">
+        <field name="name">Helpdesk Ticket Custom Tabs</field>
+        <field name="res_model">service.desk.form.tab</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_service_desk_form_field_list" model="ir.ui.view">
+        <field name="name">service.desk.form.field.list</field>
+        <field name="model">service.desk.form.field</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="technical_name"/>
+                <field name="field_type"/>
+                <field name="tab_id"/>
+                <field name="is_required"/>
+                <field name="is_visible_portal"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_form_field_form" model="ir.ui.view">
+        <field name="name">service.desk.form.field.form</field>
+        <field name="model">service.desk.form.field</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="technical_name"/>
+                        <field name="field_type"/>
+                        <field name="tab_id"/>
+                        <field name="sequence"/>
+                        <field name="is_required"/>
+                        <field name="is_visible_portal"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group invisible="field_type != 'selection'">
+                        <field name="selection_options"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_desk_form_field" model="ir.actions.act_window">
+        <field name="name">Helpdesk Ticket Custom Fields</field>
+        <field name="res_model">service.desk.form.field</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

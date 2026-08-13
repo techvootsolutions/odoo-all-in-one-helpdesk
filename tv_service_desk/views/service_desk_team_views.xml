@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_team_list" model="ir.ui.view">
+        <field name="name">service.desk.team.list</field>
+        <field name="model">service.desk.team</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="leader_id" string="Team Head"/>
+                <field name="is_default"/>
+                <field name="ticket_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_team_form" model="ir.ui.view">
+        <field name="name">service.desk.team.form</field>
+        <field name="model">service.desk.team</field>
+        <field name="arch" type="xml">
+            <form class="o_sd_team_form">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" class="oe_stat_button" icon="fa-ticket">
+                            <field name="ticket_count" widget="statinfo" string="Tickets"/>
+                        </button>
+                        <button name="action_view_sla_policies" type="object" class="oe_stat_button" icon="fa-tags">
+                            <field name="sla_count" widget="statinfo" string="Helpdesk SLA"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="working_calendar_id" string="Working Schedule"/>
+                            <field name="alias_domain_configured" invisible="1"/>
+                            <label for="alias_name" string="Email Alias" invisible="not alias_domain_configured"/>
+                            <div class="o_row o_sd_team_alias_row" invisible="not alias_domain_configured">
+                                <field name="alias_name" placeholder="sales" class="oe_inline"/>
+                                <span class="oe_inline">@</span>
+                                <field name="alias_domain_id" class="oe_inline" placeholder="mycompany.com"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </div>
+                            <field name="email" string="Email Alias" placeholder="e.g. sales@gmail.com"
+                                   invisible="alias_domain_configured"/>
+                            <div class="text-muted o_sd_team_alias_hint" invisible="alias_domain_configured">
+                                <a href="/odoo/settings#email-alias-setting" class="btn-link p-0" role="button">
+                                    Configure a custom domain
+                                </a>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="leader_id" string="Team Head"/>
+                            <field name="auto_assign_user"/>
+                            <field name="auto_assign_method" invisible="not auto_assign_user"/>
+                            <field name="open_stage_ids" string="Open Ticket Stages"
+                                   widget="many2many_tags"
+                                   invisible="not auto_assign_user or auto_assign_method != 'equal_open'"/>
+                            <field name="auto_assign_domain" string="Filters"
+                                   widget="domain"
+                                   options="{'model': 'service.desk.ticket'}"
+                                   invisible="not auto_assign_user or auto_assign_method != 'custom_filter'"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="is_default" invisible="1"/>
+                            <field name="assignment_method" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="color" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Team Members" name="team_members">
+                            <div class="o_sd_team_members_section">
+                            <field name="member_ids"
+                                   mode="kanban"
+                                   class="w-100 o_sd_team_members_kanban"
+                                   domain="[('share', '=', False)]">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card" class="flex-row">
+                                            <aside>
+                                                <field name="avatar_128"
+                                                       widget="image"
+                                                       class="o_image_64_cover"
+                                                       alt="Avatar"/>
+                                            </aside>
+                                            <main class="ms-3 d-flex align-items-center">
+                                                <field name="name" class="fw-bold fs-5"/>
+                                            </main>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                            </div>
+                        </page>
+                        <page string="Skills" invisible="assignment_method != 'skill_based'">
+                            <field name="skill_line_ids">
+                                <list editable="bottom">
+                                    <field name="user_id"/>
+                                    <field name="category_ids" widget="many2many_tags"/>
+                                    <field name="ticket_type_ids" widget="many2many_tags"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_desk_team" model="ir.actions.act_window">
+        <field name="name">Helpdesk Teams</field>
+        <field name="res_model">service.desk.team</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

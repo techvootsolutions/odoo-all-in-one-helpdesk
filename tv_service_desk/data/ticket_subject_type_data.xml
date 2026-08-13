@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="subject_type_inquiry" model="service.desk.ticket.subject.type">
+        <field name="name">Inquiry</field>
+        <field name="sequence">1</field>
+    </record>
+    <record id="subject_type_complaint" model="service.desk.ticket.subject.type">
+        <field name="name">Complaint</field>
+        <field name="sequence">2</field>
+    </record>
+    <record id="subject_type_request" model="service.desk.ticket.subject.type">
+        <field name="name">Request</field>
+        <field name="sequence">3</field>
+    </record>
+</odoo>

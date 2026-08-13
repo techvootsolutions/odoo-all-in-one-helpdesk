@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_customer_hour_package_list" model="ir.ui.view">
+        <field name="name">service.desk.customer.hour.package.list</field>
+        <field name="model">service.desk.customer.hour.package</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="date_start" string="Package Date"/>
+                <field name="initial_allocated_hours" widget="float_time"/>
+                <field name="rolled_over_hours" widget="float_time"/>
+                <field name="total_allocated_hours" widget="float_time"/>
+                <field name="hours_consumed" widget="float_time"/>
+                <field name="remaining_hours" widget="float_time"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_customer_hour_package_form" model="ir.ui.view">
+        <field name="name">service.desk.customer.hour.package.form</field>
+        <field name="model">service.desk.customer.hour.package</field>
+        <field name="arch" type="xml">
+            <form string="Customer Hour Package">
+                <header>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'open'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,close"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id" string="Customer"/>
+                            <label for="date_start" string="Package Date"/>
+                            <div class="o_row">
+                                <field name="date_start" nolabel="1"/>
+                                <i class="fa fa-long-arrow-right mx-1" title="to"/>
+                                <field name="date_end" nolabel="1"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="initial_allocated_hours" widget="float_time"/>
+                            <field name="rolled_over_hours" widget="float_time"/>
+                            <field name="total_allocated_hours" widget="float_time" readonly="1"/>
+                            <field name="hours_consumed" widget="float_time" readonly="1"/>
+                            <field name="remaining_hours" widget="float_time" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Timesheets" name="timesheets">
+                            <field name="timesheet_line_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="employee_id"/>
+                                    <field name="project_id"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="unit_amount" widget="float_time" string="Hours Spent"/>
+                                    <field name="sd_ticket_id" string="Helpdesk Ticket"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_service_desk_customer_hour_package_search" model="ir.ui.view">
+        <field name="name">service.desk.customer.hour.package.search</field>
+        <field name="model">service.desk.customer.hour.package</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <filter string="Open" name="open" domain="[('state', '=', 'open')]"/>
+                <filter string="Close" name="close" domain="[('state', '=', 'close')]"/>
+                <group>
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_service_desk_customer_hour_package" model="ir.actions.act_window">
+        <field name="name">Customer Hour Package</field>
+        <field name="res_model">service.desk.customer.hour.package</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_service_desk_customer_hour_package_search"/>
+    </record>
+</odoo>

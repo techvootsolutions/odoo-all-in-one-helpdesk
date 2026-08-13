@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_create_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">service.desk.create.invoice.wizard.form</field>
+        <field name="model">service.desk.create.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Invoice">
+                <group>
+                    <field name="ticket_id" invisible="1"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="partner_id"/>
+                    <field name="subject" invisible="ticket_id"/>
+                    <field name="product_ids" widget="many2many_tags"/>
+                </group>
+                <footer>
+                    <button name="action_create" type="object" string="Create" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

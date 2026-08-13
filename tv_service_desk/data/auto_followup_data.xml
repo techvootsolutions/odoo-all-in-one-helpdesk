@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="auto_followup_weekly" model="service.desk.auto.followup">
+        <field name="name">Weekly</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="auto_followup_weekly_line_1" model="service.desk.auto.followup.line">
+        <field name="followup_id" ref="auto_followup_weekly"/>
+        <field name="sequence">1</field>
+        <field name="interval">2</field>
+        <field name="mail_template_id" ref="mail_template_ticket_feedback_request"/>
+    </record>
+
+    <record id="auto_followup_weekly_line_2" model="service.desk.auto.followup.line">
+        <field name="followup_id" ref="auto_followup_weekly"/>
+        <field name="sequence">2</field>
+        <field name="interval">3</field>
+        <field name="mail_template_id" ref="mail_template_ticket_feedback_request"/>
+    </record>
+
+    <record id="auto_followup_weekly_line_3" model="service.desk.auto.followup.line">
+        <field name="followup_id" ref="auto_followup_weekly"/>
+        <field name="sequence">3</field>
+        <field name="interval">5</field>
+        <field name="mail_template_id" ref="mail_template_ticket_feedback_request"/>
+    </record>
+
+    <record id="auto_followup_weekly_line_4" model="service.desk.auto.followup.line">
+        <field name="followup_id" ref="auto_followup_weekly"/>
+        <field name="sequence">4</field>
+        <field name="interval">7</field>
+        <field name="mail_template_id" ref="mail_template_ticket_feedback_request"/>
+    </record>
+</odoo>

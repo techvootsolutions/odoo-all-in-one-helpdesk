@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_ticket_whatsapp_send" model="mail.template">
+        <field name="name">Ticket Whatsapp: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Default template for Helpdesk Send By Whatsapp wizard.</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear <t t-out="object.partner_id.name or 'Customer'">Customer</t> ,<br/><br/>
+        Here is the your Ticket * <t t-out="object.name or ''">TICKET/0001</t> *<br/><br/>
+        <t t-if="object._whatsapp_config_product_details() and object.product_ids">
+            <t t-foreach="object.product_ids" t-as="product">
+                <t t-out="product.display_name"/><br/>
+            </t>
+            <br/>
+        </t>
+        from * <t t-out="object.company_id.name or ''">My Company</t> *<br/><br/>
+        <t t-if="object._whatsapp_config_send_ticket_url()">
+            *Click here to download Ticket Document* :- <t t-out="object.get_whatsapp_download_url() or ''">http://localhost/download/ht/1</t><br/><br/>
+        </t>
+        <t t-if="object._whatsapp_config_send_report_url()">
+            *Click here to See Ticket History* :- <t t-out="object.get_whatsapp_history_url() or ''">http://localhost/my/sh_tickets/1</t><br/><br/>
+        </t>
+        <t t-if="object._whatsapp_config_signature() and user.sd_whatsapp_signature">
+            * <t t-out="user.sd_whatsapp_signature or ''">Signature</t>
+        </t>
+    </p>
+</div>
+        </field>
+    </record>
+</odoo>

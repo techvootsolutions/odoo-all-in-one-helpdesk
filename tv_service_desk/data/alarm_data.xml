@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="alarm_5_minutes_email" model="service.desk.alarm">
+        <field name="reminder_before">5</field>
+        <field name="reminder_unit">minute</field>
+        <field name="type">email</field>
+    </record>
+    <record id="alarm_5_minutes_popup" model="service.desk.alarm">
+        <field name="reminder_before">5</field>
+        <field name="reminder_unit">minute</field>
+        <field name="type">popup</field>
+    </record>
+    <record id="alarm_1_hour_email" model="service.desk.alarm">
+        <field name="reminder_before">1</field>
+        <field name="reminder_unit">hour</field>
+        <field name="type">email</field>
+    </record>
+    <record id="alarm_1_day_email" model="service.desk.alarm">
+        <field name="reminder_before">1</field>
+        <field name="reminder_unit">day</field>
+        <field name="type">email</field>
+    </record>
+</odoo>

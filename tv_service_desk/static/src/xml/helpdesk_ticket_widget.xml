@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="tv_service_desk.HelpdeskTicketField">
+        <div class="o_sd_helpdesk_ticket_widget d-inline-flex align-items-center gap-1"
+             t-ref="root"
+             t-on-click.stop="onClick">
+            <i class="fa fa-life-ring text-primary" role="img" aria-label="Tickets"/>
+            <span class="o_sd_helpdesk_ticket_count" t-esc="count"/>
+        </div>
+    </t>
+
+    <t t-name="tv_service_desk.HelpdeskTicketPopover">
+        <div class="o_sd_helpdesk_ticket_popover">
+            <t t-if="!props.tickets.length">
+                <div class="o_sd_helpdesk_ticket_popover_empty text-muted p-2">
+                    No tickets linked.
+                </div>
+            </t>
+            <t t-foreach="props.tickets" t-as="ticket" t-key="ticket.id">
+                <div class="o_sd_helpdesk_ticket_popover_item">
+                    <div class="o_sd_helpdesk_ticket_popover_header d-flex justify-content-between align-items-start">
+                        <strong class="o_sd_helpdesk_ticket_popover_name" t-esc="ticket.name"/>
+                        <button type="button"
+                                class="btn btn-link btn-sm p-0 o_sd_helpdesk_ticket_popover_edit"
+                                t-on-click.stop="() => this.onEditClick(ticket.id)"
+                                title="Edit">
+                            <i class="fa fa-pencil"/>
+                        </button>
+                    </div>
+                    <div class="o_sd_helpdesk_ticket_popover_line">
+                        <span class="text-muted">Partner: </span>
+                        <span t-esc="ticket.partner"/>
+                    </div>
+                    <div class="o_sd_helpdesk_ticket_popover_line">
+                        <span class="text-muted">Subject: </span>
+                        <span t-esc="ticket.subject"/>
+                    </div>
+                    <div class="o_sd_helpdesk_ticket_popover_line">
+                        <span class="text-muted">Stage: </span>
+                        <span t-esc="ticket.stage"/>
+                    </div>
+                </div>
+            </t>
+            <button type="button"
+                    class="btn btn-light w-100 o_sd_helpdesk_ticket_popover_add"
+                    t-on-click.stop="onAddClick">
+                + Add Ticket
+            </button>
+        </div>
+    </t>
+
+</templates>

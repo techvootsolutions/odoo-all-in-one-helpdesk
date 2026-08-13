@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="tv_service_desk.TicketReminderPopup">
+        <div class="o_sd_reminder_popup">
+            <div class="o_sd_reminder_header">
+                <span class="o_sd_reminder_title">Ticket Reminder (<t t-esc="props.reminder.name"/>)</span>
+                <button type="button" class="btn-close" aria-label="Close" t-on-click="onCloseClick"/>
+            </div>
+            <div class="o_sd_reminder_body">
+                <h4 class="o_sd_reminder_section_title"><u>Ticket Information</u></h4>
+                <p><strong>Create Date :</strong> <t t-esc="props.reminder.create_date"/></p>
+                <p><strong>Due Date :</strong> <t t-esc="props.reminder.due_date"/></p>
+                <p><strong>Type :</strong> <t t-esc="props.reminder.ticket_type"/></p>
+                <p><strong>Category :</strong> <t t-esc="props.reminder.category"/></p>
+                <p><strong>Sub Category :</strong> <t t-esc="props.reminder.sub_category"/></p>
+                <p><strong>Team :</strong> <t t-esc="props.reminder.team"/></p>
+                <p><strong>Team Head :</strong> <t t-esc="props.reminder.team_head"/></p>
+                <p><strong>Assigned To :</strong> <t t-esc="props.reminder.assigned_to"/></p>
+                <p><strong>Partner :</strong> <t t-esc="props.reminder.partner"/></p>
+                <p><strong>Person Name :</strong> <t t-esc="props.reminder.person_name"/></p>
+                <div class="o_sd_reminder_links">
+                    <a href="#" class="o_sd_reminder_link" t-on-click="onTicketClick">Ticket</a>
+                    <a href="#" class="o_sd_reminder_link" t-on-click="onCloseClick">Close</a>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="tv_service_desk.TicketReminderContainer">
+        <div class="o_sd_reminder_container" t-if="props.remindersState.reminders.length">
+            <t t-foreach="props.remindersState.reminders" t-as="reminder" t-key="reminder.id">
+                <TicketReminderPopup
+                    reminder="reminder"
+                    onClose="props.dismissReminder"
+                    onOpenTicket="props.openTicket"
+                />
+            </t>
+        </div>
+    </t>
+
+</templates>

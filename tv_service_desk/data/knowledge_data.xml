@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="knowledge_category_hardware" model="service.desk.knowledge.category">
+        <field name="name">Hardware</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="knowledge_category_software" model="service.desk.knowledge.category">
+        <field name="name">Software</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="knowledge_category_networking" model="service.desk.knowledge.category">
+        <field name="name">Networking</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="knowledge_category_billing" model="service.desk.knowledge.category">
+        <field name="name">Billing</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="knowledge_category_faq" model="service.desk.knowledge.category">
+        <field name="name">FAQ</field>
+        <field name="sequence">50</field>
+    </record>
+</odoo>

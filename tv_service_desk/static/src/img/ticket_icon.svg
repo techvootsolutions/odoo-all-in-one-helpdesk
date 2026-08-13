@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <g transform="rotate(-40 24 24)">
+    <!-- Ticket Body -->
+    <path d="M 6,14 C 6,11.79 7.79,10 10,10 L 38,10 C 40.21,10 42,11.79 42,14 L 42,19 C 39.5,19 37.5,21 37.5,24 C 37.5,27 39.5,29 42,29 L 42,34 C 42,36.21 40.21,38 38,38 L 10,38 C 7.79,38 6,36.21 6,34 L 6,29 C 8.5,29 10.5,27 10.5,24 C 10.5,21 8.5,19 6,19 Z" fill="#EEF2FF" stroke="#4F46E5" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- Dashed Separator Line on Left -->
+    <line x1="16" y1="12" x2="16" y2="36" stroke="#4F46E5" stroke-width="2.5" stroke-dasharray="4,4" stroke-linecap="round"/>
+    <!-- Star Icon on Right -->
+    <path d="M 28,19 L 29.5,22 L 33,22.25 L 30.5,24.5 L 31.25,28 L 28,26.25 L 24.75,28 L 25.5,24.5 L 23,22.25 L 26.5,22 Z" fill="#3B82F6" stroke="#1D4ED8" stroke-width="1" stroke-linejoin="round"/>
+  </g>
+</svg>

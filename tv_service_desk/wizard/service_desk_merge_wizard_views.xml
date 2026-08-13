@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_merge_wizard_form" model="ir.ui.view">
+        <field name="name">service.desk.merge.wizard.form</field>
+        <field name="model">service.desk.merge.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Ticket">
+                <group string="FIELDS" col="2">
+                    <group>
+                        <field name="team_id"/>
+                        <field name="team_head_id" widget="many2one_avatar_user"/>
+                        <field name="user_id" widget="many2one_avatar_user"/>
+                        <field name="ticket_type_id"/>
+                        <field name="priority_id"/>
+                        <field name="assigned_user_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="alarm_ids" widget="many2many_tags"
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                        <field name="subject"/>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                    </group>
+                </group>
+                <group string="MERGE DATA">
+                    <field name="merge_history"/>
+                    <field name="merge_target_type" widget="radio" options="{'horizontal': true}"/>
+                    <field name="target_ticket_id" invisible="merge_target_type != 'existing'"
+                           domain="[('id', 'in', ticket_ids)]"/>
+                    <field name="merge_type" widget="radio"/>
+                </group>
+                <group string="TICKETS">
+                    <field name="ticket_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="subject"/>
+                            <field name="stage_id"/>
+                            <field name="user_id"/>
+                        </list>
+                    </field>
+                </group>
+                <footer>
+                    <button name="action_merge" type="object" string="Merge" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

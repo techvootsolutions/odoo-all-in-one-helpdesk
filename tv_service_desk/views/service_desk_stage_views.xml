@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_stage_list" model="ir.ui.view">
+        <field name="name">service.desk.stage.list</field>
+        <field name="model">service.desk.stage</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="is_default"/>
+                <field name="is_closed"/>
+                <field name="fold"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_stage_form" model="ir.ui.view">
+        <field name="name">service.desk.stage.form</field>
+        <field name="model">service.desk.stage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="next_stage_id"/>
+                        </group>
+                        <group>
+                            <field name="is_default"/>
+                            <field name="is_closed"/>
+                            <field name="fold"/>
+                            <field name="mail_template_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_desk_stage" model="ir.actions.act_window">
+        <field name="name">Helpdesk Stages</field>
+        <field name="res_model">service.desk.stage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

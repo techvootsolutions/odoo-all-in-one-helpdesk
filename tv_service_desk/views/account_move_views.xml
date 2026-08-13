@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_move_form_service_desk" model="ir.ui.view">
+        <field name="name">account.move.form.service.desk</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_service_desk_tickets" type="object"
+                        class="oe_stat_button" icon="fa-ticket"
+                        invisible="sd_ticket_count == 0"
+                        groups="tv_service_desk.group_service_desk_invoice">
+                    <field name="sd_ticket_count" widget="statinfo" string="Tickets"/>
+                </button>
+            </div>
+            <header position="inside">
+                <button name="action_create_service_desk_ticket" type="object"
+                        string="Create Ticket" class="btn-primary"
+                        groups="tv_service_desk.group_service_desk_invoice"/>
+            </header>
+            <field name="partner_id" position="after">
+                <field name="sd_ticket_ids" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_search_service_desk" model="ir.ui.view">
+        <field name="name">account.invoice.search.service.desk</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <filter name="myinvoices" position="after">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_invoice"/>
+            </filter>
+        </field>
+    </record>
+</odoo>

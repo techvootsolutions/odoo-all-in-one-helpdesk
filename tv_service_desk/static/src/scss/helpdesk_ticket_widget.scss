@@ -1,0 +1,42 @@
+.o_sd_helpdesk_ticket_widget {
+    cursor: pointer;
+    white-space: nowrap;
+
+    .o_sd_helpdesk_ticket_count {
+        font-weight: 600;
+        color: $o-brand-primary;
+    }
+}
+
+.o_sd_helpdesk_ticket_popover {
+    min-width: 260px;
+    max-width: 320px;
+    padding: 0.5rem 0 0;
+
+    .o_sd_helpdesk_ticket_popover_item {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid $border-color;
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    .o_sd_helpdesk_ticket_popover_name {
+        font-size: 0.95rem;
+    }
+
+    .o_sd_helpdesk_ticket_popover_line {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .o_sd_helpdesk_ticket_popover_add {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+}

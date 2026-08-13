@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_service_desk" name="Portal My Home: Service Desk" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Helpdesk Tickets</t>
+                <t t-set="url" t-value="'/my/service-desk'"/>
+                <t t-set="text">Follow all your helpdesk tickets</t>
+                <t t-set="icon" t-value="'/tv_service_desk/static/src/img/ticket_icon.svg'"/>
+                <t t-set="placeholder_count" t-value="'sd_ticket_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_tickets" name="My Service Desk Tickets">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Helpdesk Tickets</t>
+                <div class="ms-lg-auto btn-group">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create_ticket_modal">
+                        <i class="fa fa-plus me-1"/>Create New
+                    </button>
+                </div>
+            </t>
+            
+            <t t-if="not tickets">
+                <p class="text-muted mt-3">There are currently no tickets for your account.</p>
+            </t>
+            <t t-else="">
+                <div class="table-responsive bg-white rounded shadow-sm mt-3">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr class="table-primary text-white">
+                                <th>Ticket Number</th>
+                                <th>Create Date</th>
+                                <th>Last Update Date</th>
+                                <th>Ticket Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="grouped_tickets" t-as="group">
+                                <t t-if="group['name']">
+                                    <tr class="table-light">
+                                        <td colspan="5" class="fw-bold text-dark text-start">
+                                            <t t-esc="group['name']"/> (<t t-esc="len(group['tickets'])"/>)
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr t-foreach="group['tickets']" t-as="ticket">
+                                    <td class="align-middle">
+                                        <a t-att-href="'/my/service-desk/%s' % ticket.id" class="fw-bold text-decoration-none">
+                                            <t t-esc="ticket.name"/>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span t-field="ticket.create_date" t-options='{"widget": "datetime"}'/>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span t-field="ticket.last_update_date" t-options='{"widget": "datetime"}'/>
+                                    </td>
+                                    <td class="align-middle">
+                                        <t t-esc="ticket.ticket_type_id.name or ''"/>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="badge rounded-pill bg-success text-white px-2 py-1">
+                                            <t t-esc="ticket.stage_id.name"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div t-if="pager" class="o_portal_pager mt-3 d-flex justify-content-center">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+
+            <!-- Modal Creation Form -->
+            <div class="modal fade" id="create_ticket_modal" tabindex="-1" aria-labelledby="create_ticket_modal_label" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form action="/my/service-desk/create" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="create_ticket_modal_label">Create Ticket</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <div class="row">
+                                    <!-- Left Column -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="subject" class="form-label fw-bold">Subject *</label>
+                                            <input type="text" name="subject" id="subject" class="form-control" required="required" placeholder="Ticket Subject"/>
+                                        </div>
+                                        
+                                        <t t-if="request.env.user.has_group('tv_service_desk.group_portal_manager')">
+                                            <div class="mb-3">
+                                                <label for="partner_id" class="form-label fw-bold">Partner</label>
+                                                <select name="partner_id" id="partner_id" class="form-select">
+                                                    <option value="">Select Partner...</option>
+                                                    <t t-foreach="partners" t-as="p">
+                                                        <option t-att-value="p.id" t-att-data-name="p.name" t-att-data-email="p.email">
+                                                            <t t-esc="p.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </t>
+                                        
+                                        <div class="mb-3">
+                                            <label for="person_name" class="form-label fw-bold">Name</label>
+                                            <t t-if="request.env.user.has_group('tv_service_desk.group_portal_support')">
+                                                <input type="text" name="person_name" id="person_name" class="form-control bg-light" t-att-value="request.env.user.partner_id.name" readonly="readonly"/>
+                                            </t>
+                                            <t t-else="">
+                                                <input type="text" name="person_name" id="person_name" class="form-control" placeholder="Contact Person Name"/>
+                                            </t>
+                                        </div>
+                                        
+                                        <div class="mb-3" t-if="category_enabled">
+                                            <label for="category_id" class="form-label fw-bold">Category</label>
+                                            <select name="category_id" id="category_id" class="form-select">
+                                                <option value="">Select Category...</option>
+                                                <t t-foreach="categories" t-as="cat">
+                                                    <option t-att-value="cat.id"><t t-esc="cat.name"/></option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="ticket_type_id" class="form-label fw-bold">Type</label>
+                                            <select name="ticket_type_id" id="ticket_type_id" class="form-select">
+                                                <option value="">Select Ticket Type...</option>
+                                                <t t-foreach="ticket_types" t-as="t_type">
+                                                    <option t-att-value="t_type.id"><t t-esc="t_type.name"/></option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Right Column -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label fw-bold">Email</label>
+                                            <t t-if="request.env.user.has_group('tv_service_desk.group_portal_support')">
+                                                <input type="email" name="email" id="email" class="form-control bg-light" t-att-value="request.env.user.partner_id.email" readonly="readonly"/>
+                                            </t>
+                                            <t t-else="">
+                                                <input type="email" name="email" id="email" class="form-control" placeholder="Email Address"/>
+                                            </t>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="mobile" class="form-label fw-bold">Mobile</label>
+                                            <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Mobile / Phone Number"/>
+                                        </div>
+                                        
+                                        <div class="mb-3" t-if="subcategory_enabled">
+                                            <label for="subcategory_id" class="form-label fw-bold">Sub Category</label>
+                                            <select name="subcategory_id" id="subcategory_id" class="form-select">
+                                                <option value="">Select Sub Category...</option>
+                                                <t t-foreach="subcategories" t-as="subcat">
+                                                    <option t-att-value="subcat.id" t-att-data-parent-id="subcat.parent_id.id" style="display: none;">
+                                                        <t t-esc="subcat.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="priority_id" class="form-label fw-bold">Priority</label>
+                                            <select name="priority_id" id="priority_id" class="form-select">
+                                                <option value="">Select Priority...</option>
+                                                <t t-foreach="priorities" t-as="prio">
+                                                    <option t-att-value="prio.id"><t t-esc="prio.name"/></option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="attachments" class="form-label fw-bold">Attachments</label>
+                                            <input type="file" name="attachments" id="attachments" class="form-control" multiple="multiple"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="description" class="form-label fw-bold">Description</label>
+                                    <textarea name="description" id="description" class="form-control" rows="4" placeholder="Describe the issue..."/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Create Ticket</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category/Subcategory and Partner selection JS -->
+            <t t-set="size_limit_kb" t-value="int(request.env['ir.config_parameter'].sudo().get_param('tv_service_desk.portal_attachment_size_kb', 50))"/>
+            <script type="text/javascript">
+                (function() {
+                    function init() {
+                        // Attachment size limit validation
+                        document.addEventListener('change', function(e) {
+                            if (e.target &amp;&amp; e.target.type === 'file' &amp;&amp; e.target.name === 'attachments') {
+                                var limit = parseInt('<t t-esc="size_limit_kb"/>') || 50;
+                                for (var i = 0; i &lt; e.target.files.length; i++) {
+                                    var file = e.target.files[i];
+                                    if (file.size > limit * 1024) {
+                                        alert(file.name + ' exceeds the ' + limit + 'KB file size limit');
+                                        e.target.value = ''; // clear selection
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+
+                        var categorySelect = document.getElementById('category_id');
+                        if (categorySelect) {
+                            categorySelect.addEventListener('change', function(e) {
+                                var categoryId = e.target.value;
+                                var subcategorySelect = document.getElementById('subcategory_id');
+                                if (subcategorySelect) {
+                                    var options = subcategorySelect.options;
+                                    for (var i = 0; i &lt; options.length; i++) {
+                                        var option = options[i];
+                                        if (option.value === "") continue;
+                                        var parentId = option.getAttribute('data-parent-id');
+                                        if (!categoryId || parentId === categoryId) {
+                                            option.style.display = '';
+                                        } else {
+                                            option.style.display = 'none';
+                                        }
+                                    }
+                                    subcategorySelect.value = '';
+                                }
+                            });
+                        }
+                        
+                        var partnerSelect = document.getElementById('partner_id');
+                        if (partnerSelect) {
+                            partnerSelect.addEventListener('change', function(e) {
+                                var selectedOption = e.target.options[e.target.selectedIndex];
+                                var name = selectedOption.getAttribute('data-name') || '';
+                                var email = selectedOption.getAttribute('data-email') || '';
+                                
+                                var nameInput = document.getElementById('person_name');
+                                var emailInput = document.getElementById('email');
+                                
+                                if (nameInput) nameInput.value = name;
+                                if (emailInput) emailInput.value = email;
+                            });
+                        }
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', init);
+                    } else {
+                        init();
+                    }
+                })();
+            </script>
+        </t>
+    </template>
+
+    <template id="portal_ticket_detail" name="Service Desk Ticket Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'"/>
+            <div class="row mt16 o_portal_sidebar_body">
+                <!-- Left Sidebar -->
+                <div class="col-12 col-md-4 col-lg-3 o_portal_sidebar">
+                    <div class="card bg-white mb-4 shadow-sm border-0">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary fw-bold" t-esc="ticket.name"/>
+                            <div class="mb-3">
+                                <a t-att-href="ticket.get_portal_pdf_download_url()" target="_blank" class="text-decoration-underline text-info fw-bold">
+                                    <i class="fa fa-download me-1"/>Download
+                                </a>
+                            </div>
+                            <hr/>
+                            <h5 class="fw-bold mb-3 text-secondary">Your Contact</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <img class="rounded-circle me-2" t-att-src="image_data_uri(ticket.user_id.image_128) if ticket.user_id.image_128 else '/web/static/img/placeholder.png'" style="width: 45px; height: 45px; object-fit: cover;"/>
+                                <div>
+                                    <div class="fw-bold text-dark" t-esc="ticket.user_id.name or 'Unassigned'"/>
+                                    <div class="small text-muted" t-esc="ticket.user_id.email or ''"/>
+                                    <div class="small text-muted" t-esc="ticket.user_id.phone or ''"/>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="#chatter" class="btn btn-outline-primary btn-sm w-100">Send message</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Main Card -->
+                <div class="col-12 col-md-8 col-lg-9">
+                    <div class="card bg-white shadow-sm mb-4 border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="card-title mb-0 fw-bold"><t t-esc="ticket.name"/> - <t t-esc="ticket.subject"/></h3>
+                                <span class="badge rounded-pill bg-success px-3 py-2 fs-6">
+                                    <t t-esc="ticket.stage_id.name"/>
+                                </span>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Reported on:</label>
+                                        <div class="col-sm-7 col-form-label">
+                                            <span t-field="ticket.create_date" t-options='{"widget": "datetime"}'/>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Created Date:</label>
+                                        <div class="col-sm-7 col-form-label">
+                                            <span t-field="ticket.create_date" t-options='{"widget": "datetime"}'/>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Customer:</label>
+                                        <div class="col-sm-7 col-form-label" t-esc="ticket.partner_id.name or ''"/>
+                                    </div>
+                                    <div class="mb-3 row" t-if="ticket.sd_show_category">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Category:</label>
+                                        <div class="col-sm-7 col-form-label" t-esc="ticket.category_id.name or ''"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Ticket Type:</label>
+                                        <div class="col-sm-7 col-form-label" t-esc="ticket.ticket_type_id.name or ''"/>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Last Update Date:</label>
+                                        <div class="col-sm-7 col-form-label">
+                                            <span t-field="ticket.last_update_date" t-options='{"widget": "datetime"}'/>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Customer Name:</label>
+                                        <div class="col-sm-7 col-form-label" t-esc="ticket.person_name or ''"/>
+                                    </div>
+                                    <div class="mb-3 row" t-if="ticket.sd_show_subcategory">
+                                        <label class="col-sm-5 col-form-label text-muted fw-bold">Sub Category:</label>
+                                        <div class="col-sm-7 col-form-label" t-esc="ticket.subcategory_id.name or ''"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <t t-if="ticket.description">
+                                <hr/>
+                                <h5 class="fw-bold mb-3 text-secondary">Description</h5>
+                                <div class="ticket-description border p-3 rounded bg-light" t-field="ticket.description"/>
+                            </t>
+                        </div>
+                    </div>
+                    
+                    <!-- Chatter / History -->
+                    <div id="chatter" class="card bg-white shadow-sm mb-4 border-0">
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold mb-4">History</h4>
+                            
+                            <div class="chatter-messages mb-4">
+                                <t t-set="comments" t-value="ticket.message_ids.filtered(lambda m: m.message_type == 'comment')"/>
+                                <t t-if="not comments">
+                                    <p class="text-muted">There are no comments for now.</p>
+                                </t>
+                                <t t-else="">
+                                    <div class="list-group list-group-flush">
+                                        <t t-foreach="comments" t-as="msg">
+                                            <div class="list-group-item px-0 py-3 border-bottom">
+                                                <div class="d-flex mb-2">
+                                                    <img class="rounded-circle me-2" t-att-src="image_data_uri(msg.author_id.image_128) if msg.author_id.image_128 else '/web/static/img/placeholder.png'" style="width: 38px; height: 38px; object-fit: cover;"/>
+                                                    <div>
+                                                        <strong class="text-dark" t-esc="msg.author_id.name or 'System'"/>
+                                                        <span class="small text-muted ms-2" t-field="msg.date" t-options='{"widget": "datetime"}'/>
+                                                    </div>
+                                                </div>
+                                                <div class="ps-5" t-field="msg.body"/>
+                                                
+                                                <div class="ps-5 mt-2" t-if="msg.attachment_ids">
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <t t-foreach="msg.attachment_ids" t-as="att">
+                                                            <a t-att-href="'/web/content/%s?download=true' % att.id" target="_blank" class="btn btn-light btn-sm text-decoration-none border">
+                                                                <i class="fa fa-paperclip me-1"/><t t-esc="att.name"/>
+                                                            </a>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <hr/>
+                            
+                            <!-- Message Input Form -->
+                            <form t-att-action="'/my/service-desk/%s/message' % ticket.id" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="d-flex">
+                                    <img class="rounded-circle me-2" t-att-src="image_data_uri(request.env.user.partner_id.image_128) if request.env.user.partner_id.image_128 else '/web/static/img/placeholder.png'" style="width: 38px; height: 38px; object-fit: cover;"/>
+                                    <div class="flex-grow-1">
+                                        <div class="mb-3">
+                                            <textarea name="body" class="form-control" rows="4" placeholder="Write a message..." required="required"/>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <label class="btn btn-outline-secondary btn-sm mb-0 cursor-pointer">
+                                                    <i class="fa fa-paperclip me-1"/>Attach Files
+                                                    <input type="file" name="attachments" multiple="multiple" class="d-none"/>
+                                                </label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary px-4">Send</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <t t-set="size_limit_kb" t-value="int(request.env['ir.config_parameter'].sudo().get_param('tv_service_desk.portal_attachment_size_kb', 50))"/>
+            <script type="text/javascript">
+                (function() {
+                    function init() {
+                        document.addEventListener('change', function(e) {
+                            if (e.target &amp;&amp; e.target.type === 'file' &amp;&amp; e.target.name === 'attachments') {
+                                var limit = parseInt('<t t-esc="size_limit_kb"/>') || 50;
+                                for (var i = 0; i &lt; e.target.files.length; i++) {
+                                    var file = e.target.files[i];
+                                    if (file.size > limit * 1024) {
+                                        alert(file.name + ' exceeds the ' + limit + 'KB file size limit');
+                                        e.target.value = ''; // clear selection
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', init);
+                    } else {
+                        init();
+                    }
+                })();
+            </script>
+        </t>
+    </template>
+
+    <template id="portal_ticket_feedback" name="Service Desk Feedback">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4" style="max-width:700px;">
+                <h2 class="fw-bold mb-4" style="text-align:center;">Your Feedback</h2>
+                <form t-att-action="'/my/service-desk/%s/submit-feedback' % ticket.id" method="post" id="feedback_form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="access_token" t-att-value="token or ''"/>
+                    <style>
+                        .emoji_label {
+                            cursor: pointer;
+                            display: inline-block;
+                            transition: transform 0.2s;
+                        }
+                        .emoji_label:hover {
+                            transform: scale(1.1);
+                        }
+                        .emoji_label svg {
+                            width: 64px;
+                            height: 64px;
+                            stroke: #9ca3af;
+                            stroke-width: 3;
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                            fill: none;
+                            transition: stroke 0.2s;
+                        }
+                        .emoji_label svg .eye {
+                            fill: #9ca3af;
+                            stroke: none;
+                            transition: fill 0.2s;
+                        }
+                        .emoji_label input[type="radio"]:checked ~ svg {
+                            stroke: #5bc236;
+                        }
+                        .emoji_label input[type="radio"]:checked ~ svg .eye {
+                            fill: #5bc236;
+                        }
+                    </style>
+                    <div class="d-flex gap-3 mb-3" id="emoji_row">
+                        <label class="emoji_label" title="Happy">
+                            <input type="radio" name="rating" value="5" class="d-none emoji_radio" checked="checked"/>
+                            <svg viewBox="0 0 64 64" data-label="It looks like you're feeling happy today..">
+                                <circle cx="32" cy="32" r="30"/>
+                                <circle class="eye" cx="22" cy="24" r="3"/>
+                                <circle class="eye" cx="42" cy="24" r="3"/>
+                                <path class="mouth" d="M 18 38 Q 32 50 46 38"/>
+                            </svg>
+                        </label>
+                        <label class="emoji_label" title="Content">
+                            <input type="radio" name="rating" value="4" class="d-none emoji_radio"/>
+                            <svg viewBox="0 0 64 64" data-label="It looks like you're feeling content today..">
+                                <circle cx="32" cy="32" r="30"/>
+                                <circle class="eye" cx="22" cy="24" r="3"/>
+                                <circle class="eye" cx="42" cy="24" r="3"/>
+                                <path class="mouth" d="M 20 39 Q 32 46 44 39"/>
+                            </svg>
+                        </label>
+                        <label class="emoji_label" title="Neutral">
+                            <input type="radio" name="rating" value="3" class="d-none emoji_radio"/>
+                            <svg viewBox="0 0 64 64" data-label="It looks like you're feeling neutral today..">
+                                <circle cx="32" cy="32" r="30"/>
+                                <circle class="eye" cx="22" cy="24" r="3"/>
+                                <circle class="eye" cx="42" cy="24" r="3"/>
+                                <line class="mouth" x1="20" y1="40" x2="44" y2="40"/>
+                            </svg>
+                        </label>
+                        <label class="emoji_label" title="Sad">
+                            <input type="radio" name="rating" value="2" class="d-none emoji_radio"/>
+                            <svg viewBox="0 0 64 64" data-label="It looks like you're feeling sad today..">
+                                <circle cx="32" cy="32" r="30"/>
+                                <circle class="eye" cx="22" cy="24" r="3"/>
+                                <circle class="eye" cx="42" cy="24" r="3"/>
+                                <path class="mouth" d="M 20 43 Q 32 36 44 43"/>
+                            </svg>
+                        </label>
+                        <label class="emoji_label" title="Angry">
+                            <input type="radio" name="rating" value="1" class="d-none emoji_radio"/>
+                            <svg viewBox="0 0 64 64" data-label="It looks like you're feeling angry today..">
+                                <circle cx="32" cy="32" r="30"/>
+                                <circle class="eye" cx="22" cy="24" r="3"/>
+                                <circle class="eye" cx="42" cy="24" r="3"/>
+                                <path class="mouth" d="M 18 45 Q 32 32 46 45"/>
+                            </svg>
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        <textarea name="comment" class="form-control" rows="4" placeholder="Write your comment..."/>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4 py-2" style="background:#6f42c1;border-color:#6f42c1;">Submit Feedback</button>
+                    <p class="mt-3 text-muted fst-italic" id="emoji_label_text">It looks like you're feeling happy today..</p>
+                </form>
+                <script type="text/javascript">
+                    document.querySelectorAll('.emoji_radio').forEach(function(radio) {
+                        radio.addEventListener('change', function() {
+                            var svg = this.closest('label').querySelector('svg');
+                            var txt = svg ? svg.getAttribute('data-label') : '';
+                            document.getElementById('emoji_label_text').textContent = txt;
+                        });
+                    });
+                </script>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_ticket_feedback_thanks" name="Service Desk Feedback Thanks">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4" style="max-width:700px;">
+                <div class="alert alert-success" role="alert">
+                    Thank you for your valuable feedback to us.
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="portal_knowledge" name="Knowledge Base">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <h1>Knowledge Base</h1>
+                <form class="row g-2 mb-4" method="get" action="/helpdesk/knowledge">
+                    <div class="col-md-6">
+                        <input type="text" name="search" class="form-control" placeholder="Search articles..." t-att-value="search"/>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="category_id" class="form-select">
+                            <option value="">All Categories</option>
+                            <t t-foreach="categories" t-as="cat">
+                                <option t-att-value="cat.id" t-att-selected="category_id == cat.id and 'selected' or None">
+                                    <t t-esc="cat.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-md-4 mb-3" t-foreach="articles" t-as="article">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a t-att-href="'/helpdesk/knowledge/%s' % article.id"><t t-esc="article.name"/></a>
+                                </h5>
+                                <p class="text-muted"><t t-esc="article.category_id.name"/></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div t-if="pager" class="o_portal_pager mt-3">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_knowledge_article" name="Knowledge Article">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <a href="/helpdesk/knowledge" class="btn btn-link mb-3">← Back to Knowledge Base</a>
+                <h1><t t-esc="article.name"/></h1>
+                <p class="text-muted"><t t-esc="article.category_id.name"/></p>
+                <div t-field="article.content"/>
+            </div>
+        </t>
+    </template>
+</odoo>

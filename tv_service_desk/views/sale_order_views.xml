@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_service_desk" model="ir.ui.view">
+        <field name="name">sale.order.form.service.desk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_service_desk_tickets" type="object"
+                        class="oe_stat_button" icon="fa-ticket"
+                        invisible="sd_ticket_count == 0"
+                        groups="tv_service_desk.group_service_desk_sale">
+                    <field name="sd_ticket_count" widget="statinfo" string="Tickets"/>
+                </button>
+            </div>
+            <header position="inside">
+                <button name="action_create_service_desk_ticket" type="object"
+                        string="Create Ticket" class="btn-primary"
+                        groups="tv_service_desk.group_service_desk_sale"/>
+            </header>
+            <field name="partner_id" position="after">
+                <field name="sd_ticket_ids" widget="many2many_tags" string="Tickets"
+                       groups="tv_service_desk.group_service_desk_sale"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_sale_order_quotation_search_service_desk" model="ir.ui.view">
+        <field name="name">sale.order.quotation.search.service.desk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <filter name="my_quotation" position="before">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_sale"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="view_sale_order_search_service_desk" model="ir.ui.view">
+        <field name="name">sale.order.search.service.desk</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <filter name="my_sale_orders_filter" position="before">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_sale"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+</odoo>

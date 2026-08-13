@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_whatsapp_send_wizard_form" model="ir.ui.view">
+        <field name="name">service.desk.whatsapp.send.wizard.form</field>
+        <field name="model">service.desk.whatsapp.send.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Message">
+                <group>
+                    <field name="ticket_id" invisible="1"/>
+                    <field name="partner_id"/>
+                    <field name="email_to" string="To"/>
+                    <field name="subject"/>
+                </group>
+                <group>
+                    <field name="template_id" string="Load template" options="{'no_create': True}"/>
+                </group>
+                <group>
+                    <field name="body" nolabel="1" colspan="2"/>
+                </group>
+                <group>
+                    <field name="attachment_ids" widget="many2many_binary" string="Attachments"/>
+                </group>
+                <footer>
+                    <button name="action_send" type="object" string="Send" class="btn-primary"/>
+                    <button name="action_send_by_whatsapp" type="object" string="Send By Whatsapp" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                    <button name="action_save_template" type="object" string="Save Template" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

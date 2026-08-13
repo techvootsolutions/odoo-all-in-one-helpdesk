@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_whatsapp_config_form" model="ir.ui.view">
+        <field name="name">service.desk.whatsapp.config.form</field>
+        <field name="model">service.desk.whatsapp.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="active"/>
+                        <field name="default_team_id"/>
+                        <field name="api_url"/>
+                        <field name="phone_number_id"/>
+                        <field name="api_token" password="True"/>
+                    </group>
+                    <group string="Notifications">
+                        <field name="notify_on_create"/>
+                        <field name="notify_on_assign"/>
+                        <field name="notify_on_close"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_desk_whatsapp_config" model="ir.actions.act_window">
+        <field name="name">WhatsApp</field>
+        <field name="res_model">service.desk.whatsapp.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

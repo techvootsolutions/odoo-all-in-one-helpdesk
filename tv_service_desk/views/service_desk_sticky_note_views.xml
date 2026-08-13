@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_sticky_note_list" model="ir.ui.view">
+        <field name="name">service.desk.sticky.note.list</field>
+        <field name="model">service.desk.sticky.note</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name" string="Title"/>
+                <field name="user_id" string="User"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_sticky_note_kanban" model="ir.ui.view">
+        <field name="name">service.desk.sticky.note.kanban</field>
+        <field name="model">service.desk.sticky.note</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="user_id" class="o_sd_sticky_note_kanban">
+                <field name="name"/>
+                <field name="note"/>
+                <field name="color"/>
+                <field name="user_id"/>
+                <field name="ticket_id"/>
+                <field name="ticket_name"/>
+                <field name="is_shared"/>
+                <field name="create_date"/>
+                <field name="audio_attachment_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_global_click o_sd_sticky_note_card"
+                             t-att-style="record.color.raw_value ? 'border-left-color: ' + record.color.raw_value : ''">
+                            <div class="o_sd_sticky_note_card_title fw-bold mb-1">
+                                <t t-esc="record.name.value"/>
+                                <t t-if="record.ticket_name.value"> - <t t-esc="record.ticket_name.value"/></t>
+                            </div>
+                            <div class="o_sd_sticky_note_card_body mb-2">
+                                <field name="note"/>
+                            </div>
+                            <div t-if="record.audio_attachment_id.raw_value" class="mb-2">
+                                <audio controls="controls" t-att-src="'/web/content/' + record.audio_attachment_id.raw_value + '?download=true'"/>
+                            </div>
+                            <div class="o_sd_sticky_note_card_footer d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">
+                                    Created on: <field name="create_date" widget="datetime"/>
+                                </span>
+                                <div class="d-flex align-items-center gap-1">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <i t-if="record.is_shared.raw_value" class="fa fa-globe text-primary" title="Shared"/>
+                                    <i t-else="" class="fa fa-users text-muted" title="Private"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_service_desk_sticky_note_form" model="ir.ui.view">
+        <field name="name">service.desk.sticky.note.form</field>
+        <field name="model">service.desk.sticky.note</field>
+        <field name="arch" type="xml">
+            <form string="Sticky Note">
+                <header>
+                    <button name="action_open_document" type="object" string="Open Document"
+                            class="oe_highlight" invisible="not ticket_id"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" string="Title"/>
+                            <field name="ticket_id" invisible="1"/>
+                            <field name="model_id" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="color" widget="color"/>
+                        </group>
+                    </group>
+                    <field name="note" nolabel="1" class="o_sd_sticky_note_form_body"/>
+                    <group>
+                        <field name="user_id" widget="many2one_avatar_user"/>
+                        <field name="is_shared" string="Share Note"/>
+                        <field name="shared_user_ids" widget="many2many_avatar_user"
+                               invisible="not is_shared"/>
+                    </group>
+                    <group invisible="not audio_attachment_id">
+                        <field name="audio_attachment_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_service_desk_sticky_note_search" model="ir.ui.view">
+        <field name="name">service.desk.sticky.note.search</field>
+        <field name="model">service.desk.sticky.note</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="ticket_id"/>
+                <filter string="Shared Notes" name="shared_notes" domain="[('is_shared', '=', True)]"/>
+                <filter string="My Notes" name="my_notes" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Model" name="group_model" context="{'group_by': 'model_id'}"/>
+                    <filter string="Record" name="group_record" context="{'group_by': 'ticket_id'}"/>
+                    <filter string="Shared" name="group_shared" context="{'group_by': 'is_shared'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_service_desk_sticky_note" model="ir.actions.act_window">
+        <field name="name">Sticky Notes</field>
+        <field name="res_model">service.desk.sticky.note</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_service_desk_sticky_note_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+</odoo>

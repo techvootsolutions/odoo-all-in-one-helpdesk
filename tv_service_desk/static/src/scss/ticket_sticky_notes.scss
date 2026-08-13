@@ -1,0 +1,56 @@
+.o_sd_ticket_sticky_notes_wrap {
+    .o_sd_ticket_sticky_notes_toolbar {
+        background: #f8f9fa;
+        border: 1px dashed #dee2e6;
+        border-radius: 4px;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+.o_sd_ticket_sticky_notes {
+    .o_sd_ticket_sticky_note {
+        min-width: 280px;
+        max-width: 360px;
+        flex: 1 1 280px;
+        border: 1px solid #dee2e6;
+        border-left-width: 4px;
+        border-radius: 4px;
+        background: #fff;
+        padding: 10px 12px;
+    }
+
+    .o_sd_ticket_sticky_note_title {
+        margin-bottom: 6px;
+    }
+
+    .o_sd_ticket_sticky_note_body {
+        min-height: 48px;
+        margin-bottom: 8px;
+        word-break: break-word;
+    }
+
+    .o_sd_ticket_sticky_note_footer {
+        border-top: 1px solid #f1f3f5;
+        padding-top: 6px;
+    }
+}
+
+@for $i from 0 through 11 {
+    .o_sd_note_color_#{$i} {
+        border-left-color: var(--o-color-#{$i});
+    }
+}
+
+.o_sd_sticky_note_wizard_body,
+.o_sd_sticky_note_form_body {
+    min-height: 120px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.o_sd_sticky_note_kanban {
+    .o_sd_sticky_note_card {
+        border-left-width: 4px;
+    }
+}

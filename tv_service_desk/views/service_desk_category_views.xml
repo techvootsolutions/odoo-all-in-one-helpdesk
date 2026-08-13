@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Category Views -->
+    <record id="view_service_desk_category_list" model="ir.ui.view">
+        <field name="name">service.desk.category.list</field>
+        <field name="model">service.desk.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_category_form" model="ir.ui.view">
+        <field name="name">service.desk.category.form</field>
+        <field name="model">service.desk.category</field>
+        <field name="arch" type="xml">
+            <form string="Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description" placeholder="Description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Sub Category Views -->
+    <record id="view_service_desk_subcategory_list" model="ir.ui.view">
+        <field name="name">service.desk.subcategory.list</field>
+        <field name="model">service.desk.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="parent_id" string="Parent Category"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_subcategory_form" model="ir.ui.view">
+        <field name="name">service.desk.subcategory.form</field>
+        <field name="model">service.desk.category</field>
+        <field name="arch" type="xml">
+            <form string="Sub Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="parent_id" string="Parent Category" required="1" domain="[('parent_id', '=', False)]"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="active"/>
+                    </group>
+                    <field name="description" placeholder="Description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_service_desk_category" model="ir.actions.act_window">
+        <field name="name">Helpdesk Categories</field>
+        <field name="res_model">service.desk.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('parent_id', '=', False)]</field>
+        <field name="context">{'default_parent_id': False}</field>
+    </record>
+
+    <record id="action_service_desk_category_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_service_desk_category_list"/>
+        <field name="act_window_id" ref="action_service_desk_category"/>
+    </record>
+
+    <record id="action_service_desk_category_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_service_desk_category_form"/>
+        <field name="act_window_id" ref="action_service_desk_category"/>
+    </record>
+
+    <record id="action_service_desk_subcategory" model="ir.actions.act_window">
+        <field name="name">Helpdesk Sub Categories</field>
+        <field name="res_model">service.desk.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('parent_id', '!=', False)]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="action_service_desk_subcategory_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_service_desk_subcategory_list"/>
+        <field name="act_window_id" ref="action_service_desk_subcategory"/>
+    </record>
+
+    <record id="action_service_desk_subcategory_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_service_desk_subcategory_form"/>
+        <field name="act_window_id" ref="action_service_desk_subcategory"/>
+    </record>
+</odoo>

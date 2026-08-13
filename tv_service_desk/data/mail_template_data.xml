@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      Chatter-safe email bodies: dark text only, no white-on-colored headers.
+      Odoo 19 renders outgoing emails in a shadow DOM on light bubbles — white
+      inline text becomes invisible.
+    -->
+
+    <record id="mail_template_ticket_created_customer" model="mail.template">
+        <field name="name">New Ticket: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Your Ticket is generated (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the customer when a new service desk ticket is created.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET/0015</t></h3>
+  <p style="margin:0 0 10px 0;color:#212529;">Dear <t t-out="object.partner_id.name or object.person_name or 'Customer'">Customer</t>, we received your request.</p>
+  <p style="margin:0 0 16px 0;color:#212529;">Our Support Team will contact you as soon as possible.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_assigned" model="mail.template">
+        <field name="name">Ticket Allocation to assign user: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Ticket is assign to user (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.team_head_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ ','.join([u.email_formatted for u in (object.assigned_user_ids | object.user_id) if u.email_formatted]) }}</field>
+        <field name="lang">{{ object.user_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to assigned users when a ticket is assigned.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET/0015</t></h3>
+  <p style="margin:0 0 10px 0;color:#212529;">We have received a new ticket from the customer.</p>
+  <p style="margin:0 0 16px 0;color:#212529;">Please take a follow-up as soon as possible.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_reminder" model="mail.template">
+        <field name="name">Ticket Reminder</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Ticket Reminder (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ ','.join([u.email_formatted for u in (object.assigned_user_ids | object.user_id) if u.email_formatted]) }}</field>
+        <field name="lang">{{ object.user_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the assigned agent on the ticket reminder date.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;">Ticket Information</h3>
+  <p style="margin:4px 0;color:#212529;"><strong>Ticket :</strong> <t t-out="object.name">TICKET/0007</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Create Date :</strong> <t t-out="str(object.create_date or '')">2023-12-27</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Due Date :</strong> <t t-out="str(object.reminder_due_date or '')">2023-12-29</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Type :</strong> <t t-out="object.ticket_type_id.name or ''">Technical</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Team :</strong> <t t-out="object.team_id.name or ''">Tech Team</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Team Head :</strong> <t t-out="object.team_head_id.name or ''">Mitchell Admin</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Partner :</strong> <t t-out="object.partner_id.name or ''">Colleen Diaz</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Person Name :</strong> <t t-out="object.person_name or ''">Colleen Diaz</t></p>
+  <p style="margin:4px 0;color:#212529;"><strong>Email :</strong> <t t-out="object.partner_email or ''">colleen@example.com</t></p>
+  <p style="margin:12px 0 0 0;"><a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a></p>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_resolved" model="mail.template">
+        <field name="name">Resolved Ticket: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Your ticket is resolved (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the customer when the ticket is moved to the resolved stage.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET/0019</t></h3>
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or object.person_name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 16px 0;color:#212529;">Your ticket is resolved. If you need further assistance, please reply.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_feedback_request" model="mail.template">
+        <field name="name">Closed Ticket: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Your ticket is closed (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.closed_by_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the customer when the ticket is closed.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET/0015</t></h3>
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or object.person_name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 8px 0;color:#212529;">Your ticket is closed for now. If you want to re-open your ticket, please reply.</p>
+  <p style="margin:0 0 16px 0;color:#212529;">We would like to get your feedback on the support.</p>
+  <a t-attf-href="{{ object.get_base_url() }}/my/service-desk/{{ object.id }}/feedback" style="color:#0d6efd;text-decoration:underline;font-weight:bold;margin-right:12px;">Give Feedback</a>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_reply" model="mail.template">
+        <field name="name">Ticket Reply: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">Ticket reply from {{ object.company_id.name }} (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Template for replying to a customer ticket.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET/0015</t></h3>
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or object.person_name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 16px 0;color:#212529;">Your ticket is being worked on. We will contact you soon.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_whatsapp" model="mail.template">
+        <field name="name">Ticket Whatsapp: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Ticket WhatsApp Notification (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">WhatsApp notification email template.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 12px 0;color:#212529;">You have a new WhatsApp message regarding ticket <strong><t t-out="object.name">TICKET</t></strong>.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;">View Ticket</a>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_cancelled" model="mail.template">
+        <field name="name">Ticket is Cancelled: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Your ticket is Cancelled (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the customer when the ticket is cancelled.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET</t></h3>
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 8px 0;color:#212529;">Your ticket <strong><t t-out="object.name">TICKET</t></strong> has been cancelled.</p>
+  <t t-if="object.cancelled_reason"><p style="margin:0 0 12px 0;color:#212529;"><strong>Reason:</strong> <t t-out="object.cancelled_reason"/></p></t>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_ticket_reopened" model="mail.template">
+        <field name="name">Ticket is Re-Opened: Send by email</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">{{ object.company_id.name }} Your ticket is Re-Opened (Ref {{ object.name }})</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_email or object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Sent to the customer when the ticket is re-opened.</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <h3 style="margin:0 0 12px 0;color:#212529;font-size:16px;font-weight:bold;"><t t-out="object.name">TICKET</t></h3>
+  <p style="margin:0 0 8px 0;color:#212529;">Dear <t t-out="object.partner_id.name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0 0 16px 0;color:#212529;">Your ticket <strong><t t-out="object.name">TICKET</t></strong> has been re-opened and our team will follow up soon.</p>
+  <a t-att-href="object.get_portal_url()" style="color:#0d6efd;text-decoration:underline;font-weight:bold;">View Ticket</a>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #dee2e6;font-size:12px;color:#495057;">
+    <table border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="vertical-align:top;text-align:left;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.name">My Company</t><br/>
+          <t t-out="object.company_id.phone or ''">+1 (650) 555-0111</t>
+        </td>
+        <td style="vertical-align:top;text-align:right;font-size:12px;color:#495057;width:50%;">
+          <t t-out="object.company_id.email or ''">info@yourcompany.com</t><br/>
+          <t t-out="object.company_id.website or ''">http://www.example.com</t>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_sla_warning" model="mail.template">
+        <field name="name">Service Desk: SLA Warning</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">SLA warning — Ticket {{ object.name }}</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.user_id.email_formatted or '' }}</field>
+        <field name="lang">{{ object.user_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Default template for SLA warning notifications (assign on SLA policy).</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <p style="margin:0 0 8px 0;color:#212529;">Hello <t t-out="object.user_id.name or ''">Agent</t>,</p>
+  <p style="margin:0 0 8px 0;color:#212529;">Ticket <strong><t t-out="object.name or ''">SD/2026/00001</t></strong> is approaching its SLA deadline.</p>
+  <p style="margin:0;color:#212529;">Subject: <t t-out="object.subject or ''">Subject</t><br/>
+     SLA deadline: <t t-out="format_datetime(object.sla_deadline) or ''">2026-01-01</t><br/>
+     SLA status: <t t-out="object.sla_status or ''">ongoing</t></p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_sla_escalation" model="mail.template">
+        <field name="name">Service Desk: SLA Escalation</field>
+        <field name="model_id" ref="model_service_desk_ticket"/>
+        <field name="subject">SLA breached — Ticket {{ object.name }}</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.user_id.email_formatted or '' }}</field>
+        <field name="lang">{{ object.user_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Default template for SLA breach escalation (assign on SLA policy).</field>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <p style="margin:0 0 8px 0;color:#212529;">Hello,</p>
+  <p style="margin:0 0 8px 0;color:#212529;">SLA has been breached on ticket <strong><t t-out="object.name or ''">SD/2026/00001</t></strong>.</p>
+  <p style="margin:0;color:#212529;">Subject: <t t-out="object.subject or ''">Subject</t><br/>
+     Customer: <t t-out="object.partner_id.name or 'N/A'">Customer</t><br/>
+     Assigned to: <t t-out="object.user_id.name or 'Unassigned'">Agent</t><br/>
+     SLA deadline: <t t-out="format_datetime(object.sla_deadline) or ''">2026-01-01</t></p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_contract_low_balance" model="mail.template">
+        <field name="name">Service Desk: Contract Low Balance</field>
+        <field name="model_id" ref="model_service_desk_support_contract"/>
+        <field name="subject">Low support hours on contract {{ object.name }}</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <p style="margin:0 0 8px 0;color:#212529;">Hello <t t-out="object.partner_id.name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0;color:#212529;">Your support contract <strong><t t-out="object.name or ''">Contract</t></strong> has <strong><t t-out="object.remaining_hours or 0">2</t></strong> hours remaining.</p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_contract_expiry" model="mail.template">
+        <field name="name">Service Desk: Contract Expiry Reminder</field>
+        <field name="model_id" ref="model_service_desk_support_contract"/>
+        <field name="subject">Support contract {{ object.name }} expiring soon</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.partner_id.email or '' }}</field>
+        <field name="lang">{{ object.partner_id.lang or user.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:16px;font-family:Arial,sans-serif;color:#212529;line-height:1.5;">
+  <p style="margin:0 0 8px 0;color:#212529;">Hello <t t-out="object.partner_id.name or 'Customer'">Customer</t>,</p>
+  <p style="margin:0;color:#212529;">Your support contract <strong><t t-out="object.name or ''">Contract</t></strong> expires on <strong><t t-out="format_date(object.date_end) or ''">2026-12-31</t></strong>.</p>
+</div>
+        </field>
+    </record>
+</odoo>

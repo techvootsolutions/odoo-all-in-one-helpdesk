@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_stage_log_list" model="ir.ui.view">
+        <field name="name">service.desk.stage.log.list</field>
+        <field name="model">service.desk.stage.log</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="change_date"/>
+                <field name="ticket_id"/>
+                <field name="old_stage_id"/>
+                <field name="new_stage_id"/>
+                <field name="user_id"/>
+                <field name="duration_hours"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_desk_stage_log_pivot" model="ir.ui.view">
+        <field name="name">service.desk.stage.log.pivot</field>
+        <field name="model">service.desk.stage.log</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="new_stage_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="change_date" interval="month" type="col"/>
+                <field name="duration_hours" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_service_desk_stage_log_graph" model="ir.ui.view">
+        <field name="name">service.desk.stage.log.graph</field>
+        <field name="model">service.desk.stage.log</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="new_stage_id"/>
+                <field name="duration_hours" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_service_desk_stage_log_search" model="ir.ui.view">
+        <field name="name">service.desk.stage.log.search</field>
+        <field name="model">service.desk.stage.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="ticket_id"/>
+                <field name="old_stage_id"/>
+                <field name="new_stage_id"/>
+                <field name="user_id"/>
+                <group>
+                    <filter name="group_ticket" string="Ticket" context="{'group_by': 'ticket_id'}"/>
+                    <filter name="group_old_stage" string="Previous Stage" context="{'group_by': 'old_stage_id'}"/>
+                    <filter name="group_new_stage" string="New Stage" context="{'group_by': 'new_stage_id'}"/>
+                    <filter name="group_user" string="Changed By" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'change_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_service_desk_stage_change_analysis" model="ir.actions.act_window">
+        <field name="name">Stage Change Analysis</field>
+        <field name="res_model">service.desk.stage.log</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_service_desk_stage_log_search"/>
+    </record>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Odoo demo user (login: demo / Marc Demo) only has base.group_user by default.
+        Without Helpdesk groups the app is installed but invisible in the app menu.
+    -->
+    <record id="base.user_demo" model="res.users">
+        <field name="group_ids" eval="[
+            (4, ref('tv_service_desk.group_service_desk_user')),
+            (4, ref('tv_service_desk.group_service_desk_task')),
+            (4, ref('tv_service_desk.group_service_desk_sticky_note_user')),
+            (4, ref('tv_service_desk.group_service_desk_ticket_alarm')),
+            (4, ref('tv_service_desk.group_service_desk_sla_policy')),
+            (4, ref('tv_service_desk.group_service_desk_crm')),
+            (4, ref('tv_service_desk.group_service_desk_sale')),
+            (4, ref('tv_service_desk.group_service_desk_purchase')),
+            (4, ref('tv_service_desk.group_service_desk_invoice')),
+            (4, ref('tv_service_desk.group_service_desk_timesheet')),
+            (4, ref('tv_service_desk.group_service_desk_repair')),
+            (4, ref('tv_service_desk.group_service_desk_custom')),
+            (4, ref('tv_service_desk.group_service_desk_whatsapp')),
+        ]"/>
+    </record>
+</odoo>

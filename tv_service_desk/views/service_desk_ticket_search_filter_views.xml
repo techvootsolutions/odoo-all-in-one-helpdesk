@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_ticket_search_repair_filter" model="ir.ui.view">
+        <field name="name">service.desk.ticket.search.repair.filter</field>
+        <field name="model">service.desk.ticket</field>
+        <field name="inherit_id" ref="view_service_desk_ticket_search"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <filter name="filter_running_ticket" position="after">
+                <filter name="filter_repair_order" string="Repair Order"
+                        domain="[('repair_order_ids', '!=', False)]"/>
+            </filter>
+        </field>
+    </record>
+</odoo>

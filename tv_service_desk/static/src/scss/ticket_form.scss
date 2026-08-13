@@ -1,0 +1,53 @@
+/* Ticket form — replied status badges & chatter readability */
+.o_sd_ticket_form {
+    .o_sd_form_meta_row {
+        .o_sd_role_badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0;
+            background-color: transparent;
+            color: #dc3545;
+            border: none;
+        }
+
+    }
+
+    .o_sd_replied_status_banner {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+    }
+
+    .o_sd_customer_replied_banner {
+        background-color: #f0ad4e;
+        color: #fff;
+    }
+
+    .o_sd_staff_replied_banner {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+}
+
+/* Chatter sits outside the <form> tag — target ticket form views via :has() */
+.o_form_view:has(.o_sd_ticket_form) .o-mail-Chatter {
+    .o-mail-Message-body,
+    .o-mail-Message-richBody {
+        color: #212529;
+        line-height: 1.5;
+    }
+
+    .o-mail-Message-bubble.o-blue,
+    .o-mail-Message-bubble.o-green,
+    .o-mail-Message-bubble.o-orange {
+        --o-message-bubble-bg: #f8f9fa;
+        --o-message-bubble-border-color: #dee2e6;
+    }
+
+    .o-mail-Message-subject,
+    em.text-muted {
+        color: #6c757d !important;
+    }
+}

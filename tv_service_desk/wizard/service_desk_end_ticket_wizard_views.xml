@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_end_ticket_wizard_form" model="ir.ui.view">
+        <field name="name">service.desk.end.ticket.wizard.form</field>
+        <field name="model">service.desk.end.ticket.wizard</field>
+        <field name="arch" type="xml">
+            <form string="End Ticket">
+                <group>
+                    <field name="ticket_id" invisible="1"/>
+                    <field name="timesheet_line_id" invisible="1"/>
+                    <field name="name" string="Description"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="project_id"/>
+                    <field name="hour_package_id"/>
+                    <field name="start_date"/>
+                    <field name="duration" widget="float_time"/>
+                    <field name="end_date"/>
+                </group>
+                <footer>
+                    <button name="action_end_ticket" type="object" string="End Ticket" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

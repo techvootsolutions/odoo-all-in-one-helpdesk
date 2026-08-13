@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="tv_service_desk.Dashboard">
+        <div class="o_tv_service_desk_dashboard p-4">
+            <div class="dashboard-container">
+
+                <!-- 1. Header -->
+                <div class="dashboard-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div>
+                        <h1 class="dashboard-title mb-1">Welcome to Your Dashboard</h1>
+                        <p class="text-muted mb-0" t-if="state.uiConfig.show_extended_kpis">Real-time ticket monitoring, SLA tracking and customer satisfaction</p>
+                    </div>
+                    <div class="my-tickets-toggle" t-att-class="{ active: state.myTicketsOnly }" t-on-click="toggleMyTickets">
+                        <span class="toggle-track">
+                            <span class="toggle-indicator"></span>
+                        </span>
+                        <span>My Tickets Only</span>
+                    </div>
+                </div>
+
+                <!-- 2. Quick Actions -->
+                <div class="quick-actions-bar">
+                    <span class="actions-label">Quick Actions:</span>
+                    <div class="action-buttons">
+                        <button type="button" class="btn-action btn-new" t-on-click="onNewTicket">
+                            <i class="fa fa-plus-circle"></i> New Ticket
+                        </button>
+                        <button type="button" class="btn-action btn-secondary-action" t-on-click="onMyTickets">
+                            <i class="fa fa-user"></i> My Tickets
+                        </button>
+                        <button type="button" class="btn-action btn-secondary-action" t-on-click="onReports">
+                            <i class="fa fa-bar-chart"></i> Reports
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Helpdesk Filter Panel -->
+                <div class="helpdesk-filter-panel">
+                    <div class="helpdesk-filter-toolbar">
+                        <div class="helpdesk-filter-row">
+                            <t t-foreach="activeFilterTags" t-as="tag" t-key="tag.key">
+                                <span class="filter-chip">
+                                    <span class="filter-chip-label"><t t-esc="tag.label"/></span>
+                                    <button type="button" class="filter-chip-remove"
+                                            t-on-click="() => this.removeFilterTag(tag.key)"
+                                            title="Remove filter">×</button>
+                                </span>
+                            </t>
+                            <div class="helpdesk-filter-field" t-if="isFilterVisible('team_leader') and !state.filters.teamLeaderId">
+                                <label class="helpdesk-filter-label">Team Leader</label>
+                                <select class="helpdesk-filter-control"
+                                        t-on-change="(ev) => this.onSelectFilterChange('teamLeaderId', ev)">
+                                    <option value="">Select a Team Leader...</option>
+                                    <t t-foreach="state.filterOptions.teamLeaders" t-as="leader" t-key="leader.id">
+                                        <option t-att-value="leader.id"><t t-esc="leader.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="helpdesk-filter-field" t-if="isFilterVisible('team') and !state.filters.teamId">
+                                <label class="helpdesk-filter-label">Team</label>
+                                <select class="helpdesk-filter-control"
+                                        t-on-change="(ev) => this.onSelectFilterChange('teamId', ev)">
+                                    <option value="">Select a Team...</option>
+                                    <t t-foreach="state.filterOptions.teams" t-as="team" t-key="team.id">
+                                        <option t-att-value="team.id"><t t-esc="team.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="helpdesk-filter-field" t-if="isFilterVisible('assigned_user') and !state.filters.assignedUserId">
+                                <label class="helpdesk-filter-label">Assigned User</label>
+                                <select class="helpdesk-filter-control"
+                                        t-on-change="(ev) => this.onSelectFilterChange('assignedUserId', ev)">
+                                    <option value="">Select an Assigned User...</option>
+                                    <t t-foreach="state.filterOptions.assignedUsers" t-as="u" t-key="u.id">
+                                        <option t-att-value="u.id"><t t-esc="u.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="helpdesk-filter-field" t-if="isFilterVisible('date_filter')">
+                                <label class="helpdesk-filter-label">Date Filter</label>
+                                <select class="helpdesk-filter-control"
+                                        t-att-value="state.filters.dateFilter"
+                                        t-on-change="onDateFilterChange">
+                                    <t t-foreach="state.uiConfig.date_options" t-as="opt" t-key="opt.code">
+                                        <option t-att-value="opt.code"
+                                                t-att-selected="state.filters.dateFilter === opt.code">
+                                            <t t-esc="opt.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="helpdesk-filter-field helpdesk-filter-field-date"
+                                 t-if="isFilterVisible('date_filter') and isCustomDate()">
+                                <label class="helpdesk-filter-label">Start Date</label>
+                                <input type="date" class="helpdesk-filter-control"
+                                       t-att-value="state.filters.dateStart"
+                                       t-on-change="(ev) => this.onCustomDateChange('dateStart', ev)"/>
+                            </div>
+                            <div class="helpdesk-filter-field helpdesk-filter-field-date"
+                                 t-if="isFilterVisible('date_filter') and isCustomDate()">
+                                <label class="helpdesk-filter-label">End Date</label>
+                                <input type="date" class="helpdesk-filter-control"
+                                       t-att-value="state.filters.dateEnd"
+                                       t-on-change="(ev) => this.onCustomDateChange('dateEnd', ev)"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Loading -->
+                <div t-if="state.loading" class="d-flex align-items-center justify-content-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span class="ms-3 text-muted fw-bold">Updating dashboard...</span>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div t-if="!state.loading">
+
+                    <!-- 5. KPI Cards -->
+                    <div class="kpi-cards-grid">
+                        <div class="kpi-card kpi-total" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('total')" style="border-left: 5px solid #6f42c1;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #6f42c1;">
+                                    <i class="fa fa-ticket"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #6f42c1; color: #6f42c1;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value"><t t-esc="state.counts.total_tickets"/></div>
+                                <div class="kpi-label text-uppercase">Total Tickets</div>
+                            </div>
+                        </div>
+
+                        <t t-foreach="state.filterStageKpis" t-as="stage" t-key="stage.id">
+                            <div class="kpi-card kpi-stage-card"
+                                 t-att-style="'border-left: 5px solid ' + getStageColor(stage)"
+                                 t-on-click="() => this.openFilteredTicketsByStage(stage.id)">
+                                <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                    <div class="kpi-circle-icon" t-att-style="'background-color: ' + getStageColor(stage)">
+                                        <i class="fa fa-ticket"/>
+                                    </div>
+                                    <div class="kpi-circle-arrow" t-att-style="'border: 1.5px solid ' + getStageColor(stage) + '; color: ' + getStageColor(stage)">
+                                        <i class="fa fa-arrow-right"/>
+                                    </div>
+                                </div>
+                                <div class="kpi-card-content mt-3">
+                                    <div class="kpi-value"><t t-esc="stage.count"/></div>
+                                    <div class="kpi-label text-uppercase"><t t-esc="stage.name"/></div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <div class="kpi-card kpi-my" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('my')" style="border-left: 5px solid #7c3aed;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #7c3aed;">
+                                    <i class="fa fa-user"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #7c3aed; color: #7c3aed;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value"><t t-esc="state.counts.my_tickets"/></div>
+                                <div class="kpi-label text-uppercase">My Tickets</div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card kpi-sla" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('sla')" style="border-left: 5px solid #dc2626;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #dc2626;">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #dc2626; color: #dc2626;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value"><t t-esc="state.counts.sla_breached"/></div>
+                                <div class="kpi-label text-uppercase">SLA Breached</div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card kpi-rating" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('rating')" style="border-left: 5px solid #db2777;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #db2777;">
+                                    <i class="fa fa-star"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #db2777; color: #db2777;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value">
+                                    <t t-esc="state.counts.avg_rating"/> <span style="font-size: 0.9rem; color: #db2777;">★</span>
+                                </div>
+                                <div class="kpi-label text-uppercase">Average Rating</div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card kpi-active-contracts" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('active_contracts')" style="border-left: 5px solid #0284c7;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #0284c7;">
+                                    <i class="fa fa-file-text-o"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #0284c7; color: #0284c7;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value"><t t-esc="state.counts.active_contracts"/></div>
+                                <div class="kpi-label text-uppercase">Active Contracts</div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card kpi-low-contracts" t-if="state.uiConfig.show_extended_kpis" t-on-click="() => this.openFilteredTickets('low_contracts')" style="border-left: 5px solid #b91c1c;">
+                            <div class="kpi-card-header d-flex justify-content-between align-items-center">
+                                <div class="kpi-circle-icon" style="background-color: #b91c1c;">
+                                    <i class="fa fa-exclamation-circle"/>
+                                </div>
+                                <div class="kpi-circle-arrow" style="border: 1.5px solid #b91c1c; color: #b91c1c;">
+                                    <i class="fa fa-arrow-right"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card-content mt-3">
+                                <div class="kpi-value"><t t-esc="state.counts.low_balance_contracts"/></div>
+                                <div class="kpi-label text-uppercase">Low Balance Contracts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Stage Accordion (vertical list) -->
+                    <div class="stage-accordion-list" t-if="state.stageTables.length">
+                        <t t-foreach="state.stageTables" t-as="table" t-key="table.stage_id">
+                            <div class="stage-accordion-item" t-att-class="{ expanded: isStageExpanded(table.stage_id) }">
+                                <button type="button"
+                                        class="stage-accordion-header"
+                                        t-on-click="() => this.toggleStageAccordion(table.stage_id)">
+                                    <div class="stage-accordion-title">
+                                        <i t-attf-class="fa stage-accordion-chevron #{isStageExpanded(table.stage_id) ? 'fa-chevron-down' : 'fa-chevron-right'}"/>
+                                        <span class="stage-accordion-name">Stage : <t t-esc="table.stage_name"/></span>
+                                    </div>
+                                    <span class="stage-accordion-meta text-muted small">
+                                        <t t-esc="table.offset + 1"/>-<t t-esc="getPageEnd(table)"/> of <t t-esc="table.total"/>
+                                    </span>
+                                </button>
+
+                                <div class="stage-accordion-body" t-if="isStageExpanded(table.stage_id)">
+                                    <div class="stage-accordion-divider"/>
+                                    <div class="table-responsive">
+                                        <table class="table recent-tickets-table table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ticket No</th>
+                                                    <th>Customer Name</th>
+                                                    <th>Mobile Number</th>
+                                                    <th t-if="state.uiConfig.show_whatsapp"/>
+                                                    <th>Subject</th>
+                                                    <th>Assigned To</th>
+                                                    <th>Created</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="table.tickets" t-as="ticket" t-key="ticket.id">
+                                                    <tr t-on-click="() => this.openTicket(ticket.id)">
+                                                        <td class="ticket-ref"><t t-esc="ticket.name"/></td>
+                                                        <td><t t-esc="ticket.partner_name"/></td>
+                                                        <td><t t-esc="ticket.mobile"/></td>
+                                                        <td t-if="state.uiConfig.show_whatsapp" class="text-center">
+                                                            <button type="button"
+                                                                    class="btn btn-link p-0 sd-whatsapp-action"
+                                                                    title="Send By Whatsapp"
+                                                                    t-on-click="(ev) => this.onWhatsappClick(ticket.id, ev)">
+                                                                <i class="fa fa-whatsapp"/>
+                                                            </button>
+                                                        </td>
+                                                        <td class="ticket-subject"><t t-esc="ticket.subject"/></td>
+                                                        <td><t t-esc="ticket.user_name"/></td>
+                                                        <td><t t-esc="ticket.create_date"/></td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="table.tickets.length === 0">
+                                                    <tr>
+                                                        <td t-att-colspan="state.uiConfig.show_whatsapp ? 7 : 6" class="text-center text-muted py-4">No tickets in this stage.</td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="stage-pager-controls d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <span class="pager-info text-muted small mb-0">
+                                            Showing <t t-esc="table.offset + 1"/>-<t t-esc="getPageEnd(table)"/> of <t t-esc="table.total"/> tickets
+                                        </span>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                    t-att-disabled="!table.has_prev"
+                                                    t-on-click="(ev) => this.onStageTablePager(table.stage_id, 'prev', ev)">
+                                                <i class="fa fa-chevron-left"/> Previous
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                    t-att-disabled="!table.has_next"
+                                                    t-on-click="(ev) => this.onStageTablePager(table.stage_id, 'next', ev)">
+                                                Next <i class="fa fa-chevron-right"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- 7. Bottom Split View -->
+                    <div class="bottom-split-row">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <span class="section-title">Recent Tickets</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table recent-tickets-table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket ID</th>
+                                            <th>Subject</th>
+                                            <th>Customer</th>
+                                            <th>Priority</th>
+                                            <th>Assigned To</th>
+                                            <th>Stage</th>
+                                            <th>SLA Status</th>
+                                            <th>Created Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.recentTickets" t-as="ticket" t-key="ticket.id">
+                                            <tr t-on-click="() => this.openTicket(ticket.id)">
+                                                <td class="ticket-ref"><t t-esc="ticket.name"/></td>
+                                                <td class="ticket-subject"><t t-esc="ticket.subject"/></td>
+                                                <td><t t-esc="ticket.partner_name"/></td>
+                                                <td>
+                                                    <span t-attf-class="badge-priority priority-{{ticket.priority.toLowerCase()}}">
+                                                        <t t-esc="ticket.priority"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <i class="fa fa-user-circle-o text-muted me-1"></i>
+                                                    <t t-esc="ticket.user_name"/>
+                                                </td>
+                                                <td>
+                                                    <span class="badge-stage">
+                                                        <t t-esc="ticket.stage_name"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span t-attf-class="badge-sla sla-{{ticket.sla_status}}">
+                                                        <t t-if="ticket.sla_status === 'no_sla'">No SLA</t>
+                                                        <t t-if="ticket.sla_status === 'ongoing'">Ongoing</t>
+                                                        <t t-if="ticket.sla_status === 'reached'">SLA Met</t>
+                                                        <t t-if="ticket.sla_status === 'failed'">SLA Breached</t>
+                                                    </span>
+                                                </td>
+                                                <td><t t-esc="ticket.create_date"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="state.recentTickets.length === 0">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted py-4">No recent tickets found matching the selected filters.</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="section-card">
+                            <div class="section-header">
+                                <span class="section-title">Recent Activities</span>
+                            </div>
+                            <ul class="activities-feed">
+                                <t t-foreach="state.recentActivities" t-as="activity" t-key="activity.id">
+                                    <li class="activity-item">
+                                        <div t-attf-class="activity-icon-bullet type-{{activity.type}}">
+                                            <i t-if="activity.type === 'create'" class="fa fa-plus"></i>
+                                            <i t-if="activity.type === 'assign'" class="fa fa-user-plus"></i>
+                                            <i t-if="activity.type === 'stage_change'" class="fa fa-exchange"></i>
+                                            <i t-if="activity.type === 'closed'" class="fa fa-check"></i>
+                                            <i t-if="activity.type === 'sla_breached'" class="fa fa-warning"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <div class="activity-meta">
+                                                <span class="activity-user"><t t-esc="activity.user"/></span>
+                                                <span class="activity-time"><t t-esc="activity.date"/></span>
+                                            </div>
+                                            <div class="activity-desc">
+                                                <t t-esc="activity.description"/>
+                                                on ticket
+                                                <a href="#" class="ticket-link" t-on-click.prevent="() => this.openTicket(activity.ticket_id)">
+                                                    <t t-esc="activity.ticket_name"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </t>
+                                <t t-if="state.recentActivities.length === 0">
+                                    <div class="text-center text-muted py-4">No recent activities matching the selected filters.</div>
+                                </t>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

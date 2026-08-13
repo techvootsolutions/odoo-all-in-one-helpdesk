@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sale: list + kanban ticket widget -->
+    <record id="view_sale_order_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">sale.order.list.helpdesk.ticket.widget</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="activity_ids" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_sale"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_sale_order_kanban_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">sale.order.kanban.helpdesk.ticket.widget</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sale_order_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="sd_ticket_count"/>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids'][@widget='kanban_activity']" position="after">
+                <field name="sd_ticket_count" widget="helpdesk_ticket"
+                       groups="tv_service_desk.group_service_desk_sale"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Purchase: list + kanban -->
+    <record id="view_purchase_order_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">purchase.order.list.helpdesk.ticket.widget</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="activity_ids" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_purchase"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_kpis_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">purchase.order.kpis.list.helpdesk.ticket.widget</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <field name="activity_ids" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_purchase"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_view_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">purchase.order.view.list.helpdesk.ticket.widget</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="activity_ids" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_purchase"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_kanban_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">purchase.order.kanban.helpdesk.ticket.widget</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="sd_ticket_count"/>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids'][@widget='kanban_activity']" position="after">
+                <field name="sd_ticket_count" widget="helpdesk_ticket"
+                       groups="tv_service_desk.group_service_desk_purchase"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Invoice: list + kanban -->
+    <record id="view_account_invoice_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">account.invoice.list.helpdesk.ticket.widget</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="invoice_date_due" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_invoice"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_account_move_kanban_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">account.move.kanban.helpdesk.ticket.widget</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_move_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="sd_ticket_count"/>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids'][@widget='kanban_activity']" position="after">
+                <field name="sd_ticket_count" widget="helpdesk_ticket"
+                       groups="tv_service_desk.group_service_desk_invoice"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- CRM Leads: list + kanban -->
+    <record id="view_crm_lead_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">crm.lead.list.lead.helpdesk.ticket.widget</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+            <field name="country_id" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_crm"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_crm_opportunity_tree_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">crm.lead.list.opportunity.helpdesk.ticket.widget</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="sd_ticket_count" string="Tickets" widget="helpdesk_ticket"
+                       optional="show" groups="tv_service_desk.group_service_desk_crm"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_kanban_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.lead.helpdesk.ticket.widget</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_lead_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="sd_ticket_count"/>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids'][@widget='kanban_activity']" position="after">
+                <field name="sd_ticket_count" widget="helpdesk_ticket"
+                       groups="tv_service_desk.group_service_desk_crm"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_crm_pipeline_kanban_helpdesk_ticket_widget" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.pipeline.helpdesk.ticket.widget</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="sd_ticket_count"/>
+            </xpath>
+            <xpath expr="//field[@name='activity_ids'][@widget='kanban_activity']" position="after">
+                <field name="sd_ticket_count" widget="helpdesk_ticket"
+                       groups="tv_service_desk.group_service_desk_crm"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

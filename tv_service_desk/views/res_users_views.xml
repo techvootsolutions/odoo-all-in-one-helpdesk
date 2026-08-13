@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_service_desk_whatsapp" model="ir.ui.view">
+        <field name="name">res.users.form.service.desk.whatsapp</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_preferences']" position="replace">
+                <group name="other_preferences" string="OTHER">
+                    <group>
+                        <field name="sd_helpdesk_role" string="Helpdesk"/>
+                        <field name="sd_sla_policy" string="Helpdesk SLA Policy"
+                               groups="tv_service_desk.group_service_desk_manager"/>
+                        <field name="sd_ticket_alarm" string="Helpdesk Ticket Alarm"/>
+                        <field name="sd_whatsapp_feature" string="Helpdesk Whatsapp Feature"/>
+                        <field name="sd_allow_mass_update" string="Mass Ticket Update"/>
+                    </group>
+                    <group>
+                        <field name="sd_sale_helpdesk" string="Sale Helpdesk Ticket"/>
+                        <field name="sd_crm_helpdesk" string="CRM Helpdesk Ticket"/>
+                        <field name="sd_helpdesk_task" string="Helpdesk Task"/>
+                        <field name="sd_helpdesk_timesheet" string="Helpdesk Ticket Timesheet"/>
+                        <field name="sd_invoice_helpdesk" string="Invoice Helpdesk Ticket"/>
+                        <field name="sd_purchase_helpdesk" string="Purchase Helpdesk Ticket"/>
+                        <field name="sd_repair_helpdesk" string="Repair Helpdesk Ticket"/>
+                        <field name="sd_custom_field_tab" string="Helpdesk custom Field and tab"/>
+                        <field name="sd_sticky_notes_role" string="Sticky Notes"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='access_rights']" position="inside">
+                <field name="share" invisible="1"/>
+                <group string="Portal Helpdesk" invisible="not share">
+                    <field name="portal_access" string="Portal Access"/>
+                </group>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Helpdesk Notifications" name="helpdesk_notifications">
+                    <group>
+                        <group>
+                            <field name="sd_new_ticket_notification" string="New Ticket Notification?"/>
+                            <field name="sd_ticket_assigned_notification" string="Ticket Assigned Notification?"/>
+                        </group>
+                        <group>
+                            <field name="sd_ticket_done_notification" string="Ticket Done Notification?"/>
+                            <field name="sd_ticket_cancel_notification" string="Ticket Cancel Notification?"/>
+                            <field name="sd_ticket_stage_notification" string="Ticket Stage Change Notification?"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_users_form_simple_modif_service_desk_whatsapp" model="ir.ui.view">
+        <field name="name">res.users.preferences.form.service.desk.whatsapp</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='signature']" position="after">
+                <field name="sd_whatsapp_signature" string="Signature"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

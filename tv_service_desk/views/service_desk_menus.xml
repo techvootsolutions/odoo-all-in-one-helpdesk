@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Remove menus not shown in reference Configuration dropdown -->
+    <delete model="ir.ui.menu" id="menu_service_desk_whatsapp"/>
+    <delete model="ir.ui.menu" id="menu_service_desk_knowledge"/>
+    <delete model="ir.ui.menu" id="menu_service_desk_knowledge_articles"/>
+    <delete model="ir.ui.menu" id="menu_service_desk_knowledge_categories"/>
+    <delete model="ir.ui.menu" id="menu_service_desk_contracts"/>
+    <delete model="ir.ui.menu" id="menu_service_desk_repair_orders"/>
+
+    <menuitem id="menu_service_desk_root"
+              name="Helpdesk"
+              web_icon="tv_service_desk,static/description/icon.png"
+              groups="tv_service_desk.group_service_desk_user"
+              sequence="45"/>
+
+    <menuitem id="menu_service_desk_dashboard"
+              name="Dashboard"
+              parent="menu_service_desk_root"
+              action="action_service_desk_dashboard"
+              sequence="1"/>
+
+    <menuitem id="menu_service_desk_tickets"
+              name="Tickets"
+              parent="menu_service_desk_root"
+              action="action_service_desk_ticket"
+              sequence="2"/>
+
+    <menuitem id="menu_service_desk_reporting"
+              name="Reporting"
+              parent="menu_service_desk_root"
+              groups="tv_service_desk.group_service_desk_manager"
+              sequence="3"/>
+
+    <menuitem id="menu_service_desk_report_tickets"
+              name="Ticket Analytics"
+              parent="menu_service_desk_reporting"
+              action="action_service_desk_ticket_analysis"
+              sequence="1"/>
+
+    <menuitem id="menu_service_desk_report_ratings"
+              name="Customer Satisfaction"
+              parent="menu_service_desk_reporting"
+              action="action_service_desk_ticket_rating_report"
+              sequence="2"/>
+
+    <menuitem id="menu_service_desk_report_sla"
+              name="Helpdesk SLA Analysis"
+              parent="menu_service_desk_reporting"
+              action="action_service_desk_sla_analysis"
+              sequence="3"/>
+
+    <menuitem id="menu_service_desk_stage_change_analysis"
+              name="Stage Change Analysis"
+              parent="menu_service_desk_root"
+              action="action_service_desk_stage_change_analysis"
+              sequence="4"/>
+
+    <menuitem id="menu_service_desk_config"
+              name="Configuration"
+              parent="menu_service_desk_root"
+              groups="tv_service_desk.group_service_desk_manager"
+              sequence="5"/>
+
+    <!-- Configuration — exact reference order -->
+    <menuitem id="menu_service_desk_teams"
+              name="Helpdesk Teams"
+              parent="menu_service_desk_config"
+              action="action_service_desk_team"
+              sequence="1"/>
+
+    <menuitem id="menu_service_desk_ticket_types"
+              name="Helpdesk Ticket Types"
+              parent="menu_service_desk_config"
+              action="action_service_desk_ticket_type"
+              sequence="2"/>
+
+    <menuitem id="menu_service_desk_ticket_subject_types"
+              name="Helpdesk Subject Types"
+              parent="menu_service_desk_config"
+              action="action_service_desk_ticket_subject_type"
+              sequence="3"/>
+
+    <menuitem id="menu_service_desk_tags"
+              name="Helpdesk Tags"
+              parent="menu_service_desk_config"
+              action="action_service_desk_tag"
+              sequence="4"/>
+
+    <menuitem id="menu_service_desk_stages"
+              name="Helpdesk Stages"
+              parent="menu_service_desk_config"
+              action="action_service_desk_stage"
+              sequence="5"/>
+
+    <menuitem id="menu_service_desk_categories"
+              name="Helpdesk Categories"
+              parent="menu_service_desk_config"
+              action="action_service_desk_category"
+              sequence="6"/>
+
+    <menuitem id="menu_service_desk_subcategories"
+              name="Helpdesk Sub Categories"
+              parent="menu_service_desk_config"
+              action="action_service_desk_subcategory"
+              sequence="7"/>
+
+    <menuitem id="menu_service_desk_priorities"
+              name="Helpdesk Priorities"
+              parent="menu_service_desk_config"
+              action="action_service_desk_priority"
+              sequence="8"/>
+
+    <menuitem id="menu_service_desk_sla"
+              name="Helpdesk SLA Policies"
+              parent="menu_service_desk_config"
+              action="action_service_desk_sla"
+              groups="tv_service_desk.group_service_desk_manager"
+              sequence="9"/>
+
+    <menuitem id="menu_service_desk_alarm"
+              name="Helpdesk Ticket Alarm"
+              parent="menu_service_desk_config"
+              action="action_service_desk_alarm"
+              groups="tv_service_desk.group_service_desk_ticket_alarm,tv_service_desk.group_service_desk_manager"
+              sequence="10"/>
+
+    <menuitem id="menu_service_desk_hour_packages"
+              name="Customer Hour Package"
+              parent="menu_service_desk_config"
+              action="action_service_desk_customer_hour_package"
+              sequence="11"/>
+
+    <menuitem id="menu_service_desk_auto_followup"
+              name="Auto Followup"
+              parent="menu_service_desk_config"
+              action="action_service_desk_auto_followup"
+              sequence="12"/>
+
+    <menuitem id="menu_service_desk_sticky_notes"
+              name="Sticky Notes"
+              parent="menu_service_desk_config"
+              action="action_service_desk_sticky_note"
+              sequence="13"/>
+
+    <menuitem id="menu_service_desk_settings"
+              name="Settings"
+              parent="menu_service_desk_config"
+              action="action_service_desk_config_settings"
+              sequence="14"/>
+
+    <menuitem id="menu_service_desk_form_fields"
+              name="Helpdesk Ticket Custom Fields"
+              parent="menu_service_desk_config"
+              action="action_service_desk_form_field"
+              sequence="15"/>
+
+    <menuitem id="menu_service_desk_form_tabs"
+              name="Helpdesk Ticket Custom Tabs"
+              parent="menu_service_desk_config"
+              action="action_service_desk_form_tab"
+              sequence="16"/>
+</odoo>

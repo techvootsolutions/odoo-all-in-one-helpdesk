@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_crm_lead_form_service_desk" model="ir.ui.view">
+        <field name="name">crm.lead.form.service.desk</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_service_desk_tickets" type="object"
+                        class="oe_stat_button" icon="fa-ticket"
+                        invisible="sd_ticket_count == 0"
+                        groups="tv_service_desk.group_service_desk_crm">
+                    <field name="sd_ticket_count" widget="statinfo" string="Tickets"/>
+                </button>
+            </div>
+            <header position="inside">
+                <button name="action_create_service_desk_ticket" type="object"
+                        string="Create Ticket" class="btn-primary"
+                        groups="tv_service_desk.group_service_desk_crm"/>
+            </header>
+            <field name="user_id" position="after">
+                <field name="sd_ticket_ids" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_search_service_desk" model="ir.ui.view">
+        <field name="name">crm.lead.search.service.desk</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+            <filter name="assigned_to_me" position="after">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_crm"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="view_crm_opportunity_search_service_desk" model="ir.ui.view">
+        <field name="name">crm.opportunity.search.service.desk</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <filter name="assigned_to_me" position="after">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_crm"/>
+            </filter>
+        </field>
+    </record>
+</odoo>

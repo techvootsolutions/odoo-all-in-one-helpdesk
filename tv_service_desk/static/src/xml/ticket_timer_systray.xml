@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="tv_service_desk.TicketTimerSystray">
+        <div t-if="state.active" class="o_sd_timer_systray d-flex align-items-center gap-2"
+             t-on-click="onOpenTicket" title="Open running ticket timer">
+            <span class="o_sd_timer_systray_label text-truncate">
+                <t t-esc="state.ticketName"/>
+            </span>
+            <span class="o_sd_timer_systray_clock">
+                <t t-esc="state.elapsed"/>
+            </span>
+            <button type="button" class="btn btn-sm btn-primary o_sd_timer_systray_end"
+                    t-on-click.stop="onEndTimer">
+                End
+            </button>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stage_waiting" model="service.desk.stage">
+        <field name="name">Done</field>
+        <field name="sequence">3</field>
+        <field name="is_closed" eval="False"/>
+        <field name="fold" eval="False"/>
+        <field name="mail_template_id" ref="mail_template_ticket_resolved"/>
+    </record>
+    <record id="stage_done" model="service.desk.stage">
+        <field name="name">Closed</field>
+        <field name="sequence">4</field>
+        <field name="is_closed" eval="True"/>
+        <field name="fold" eval="True"/>
+    </record>
+    <record id="stage_reopened" model="service.desk.stage">
+        <field name="name">Reopened</field>
+        <field name="sequence">6</field>
+        <field name="color">2</field>
+    </record>
+    <record id="priority_normal" model="service.desk.priority">
+        <field name="name">Medium</field>
+    </record>
+    <record id="ticket_type_technical" model="service.desk.ticket.type">
+        <field name="name">Technical</field>
+    </record>
+</odoo>

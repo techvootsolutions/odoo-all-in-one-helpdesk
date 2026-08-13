@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_order_form_service_desk" model="ir.ui.view">
+        <field name="name">purchase.order.form.service.desk</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_service_desk_tickets" type="object"
+                        class="oe_stat_button" icon="fa-ticket"
+                        invisible="sd_ticket_count == 0"
+                        groups="tv_service_desk.group_service_desk_purchase">
+                    <field name="sd_ticket_count" widget="statinfo" string="Ticket"/>
+                </button>
+            </div>
+            <header position="inside">
+                <button name="action_create_service_desk_ticket" type="object"
+                        string="Create Ticket" class="btn-primary"
+                        groups="tv_service_desk.group_service_desk_purchase"/>
+            </header>
+            <field name="partner_id" position="after">
+                <field name="sd_ticket_ids" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_rfq_search_service_desk" model="ir.ui.view">
+        <field name="name">purchase.order.rfq.search.service.desk</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="arch" type="xml">
+            <filter name="my_purchases" position="after">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_purchase"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_search_service_desk" model="ir.ui.view">
+        <field name="name">purchase.order.search.service.desk</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+        <field name="arch" type="xml">
+            <filter name="my_Orders" position="after">
+                <filter name="filter_helpdesk_ticket" string="Helpdesk Ticket"
+                        domain="[('sd_ticket_ids', '!=', False)]"
+                        groups="tv_service_desk.group_service_desk_purchase"/>
+            </filter>
+        </field>
+    </record>
+</odoo>

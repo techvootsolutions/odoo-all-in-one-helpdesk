@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mail_mail_form_service_desk" model="ir.ui.view">
+        <field name="name">mail.mail.form.service.desk</field>
+        <field name="model">mail.mail</field>
+        <field name="inherit_id" ref="mail.view_mail_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_view_service_desk_ticket" type="object"
+                        string="View Helpdesk Ticket" class="oe_highlight"
+                        invisible="model != 'service.desk.ticket' or not res_id"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <div class="oe_button_box" name="button_box"
+                     invisible="model != 'service.desk.ticket' or not res_id">
+                    <button name="action_view_service_desk_ticket" type="object"
+                            class="oe_stat_button" icon="fa-ticket">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">View Helpdesk Ticket</span>
+                        </div>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

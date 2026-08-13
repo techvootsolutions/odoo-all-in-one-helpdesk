@@ -1,0 +1,64 @@
+.o_sd_reminder_container {
+    position: fixed;
+    top: 72px;
+    right: 24px;
+    z-index: 1060;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 420px;
+    pointer-events: none;
+
+    .o_sd_reminder_popup {
+        pointer-events: auto;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: 13px;
+        color: #212529;
+
+        .o_sd_reminder_header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid #dee2e6;
+
+            .o_sd_reminder_title {
+                font-weight: 600;
+                color: #b85c00;
+            }
+        }
+
+        .o_sd_reminder_body {
+            padding: 12px 14px 14px;
+
+            .o_sd_reminder_section_title {
+                font-size: 18px;
+                font-weight: 700;
+                margin: 0 0 10px;
+            }
+
+            p {
+                margin: 0 0 4px;
+                line-height: 1.4;
+            }
+
+            .o_sd_reminder_links {
+                margin-top: 12px;
+
+                .o_sd_reminder_link {
+                    color: #0d6efd;
+                    margin-right: 14px;
+                    text-decoration: none;
+                    cursor: pointer;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}

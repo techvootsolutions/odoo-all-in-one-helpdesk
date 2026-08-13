@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_desk_create_lead_wizard_form" model="ir.ui.view">
+        <field name="name">service.desk.create.lead.wizard.form</field>
+        <field name="model">service.desk.create.lead.wizard</field>
+        <field name="arch" type="xml">
+            <form string="CRM Record">
+                <group>
+                    <field name="ticket_id" invisible="1"/>
+                    <field name="lead_id" invisible="1"/>
+                    <field name="record_type" invisible="lead_id"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="team_id"/>
+                    <field name="subject" invisible="ticket_id"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button name="action_create" type="object" string="Create" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_lead_from_ticket" model="ir.actions.act_window">
+        <field name="name">Create Lead</field>
+        <field name="res_model">service.desk.create.lead.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_create_opportunity_from_ticket" model="ir.actions.act_window">
+        <field name="name">Create Opportunity</field>
+        <field name="res_model">service.desk.create.lead.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_record_type': 'opportunity'}</field>
+    </record>
+</odoo>
